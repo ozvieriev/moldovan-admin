@@ -12,15 +12,11 @@ angular.module('app', ['ngRoute',
     .config(function ($routeProvider) {
 
         $routeProvider.
-            when('/storage', {
-                templateUrl: `${viewsController}storage.html`,
-                controller: 'storageController'
+            when('/control', {
+                templateUrl: `${viewsController}control.html`,
+                controller: 'controlController'
             }).
-            when("/url-builder", {
-                templateUrl: `${viewsController}url-builder.html`,
-                controller: 'urlBuilderController'
-            }).
-            otherwise({ redirectTo: '/url-builder' });
+            otherwise({ redirectTo: '/control' });
     });
 
 //https://github.com/modularcode/modular-admin-angularjs/blob/master/src/_main.js
