@@ -6,7 +6,6 @@
   "devDependencies": {
     "gulp": "4.0.0",
     "gulp-concat": "2.6.1",
-    "gulp-csso": "3.0.1",
     "angular": "1.7.5",
     "angular-route": "1.7.5",
     "angular-websocket": "2.0.1",
