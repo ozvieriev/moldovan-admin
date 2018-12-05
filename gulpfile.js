@@ -1,6 +1,9 @@
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 
+var browserSync = require('browser-sync').create();
+var reload = browserSync.reload;
+
 gulp.task('html:index', () => {
 
   return gulp.src('src/index.html')
@@ -76,12 +79,13 @@ gulp.task('watch', gulp.series(gulp.parallel(
   'html:index:watch', 'html:views:watch',
   'js:app:watch')));
 
+gulp.task('serve', function () {
 
-// gulp.task('serve', gulp.series(gulp.parallel('default'), function () {
+  browserSync.init({ server: { baseDir: "./dist" } });
 
-//   return gulp.src('dist')
-//     .pipe(webserver({
-//       port: 3000,
-//       livereload: true
-//     }));
-// }))
+  gulp
+    .watch(['dist/**/*.html', 'dist/**/*.css', 'dist/**/*.js'])
+    .on("change", browserSync.reload);
+});
+
+gulp.task('default', gulp.series(gulp.parallel('build', 'watch', 'serve')));
