@@ -34,7 +34,7 @@
             var json = {};
             try { json = JSON.parse(response.data); }
             catch{ return console.warn('WS: Can not desiarilize the response', response.data); }
-
+            
             if (!json.cmd)
                 return console.warn('WS: Unknown command', json);
 
