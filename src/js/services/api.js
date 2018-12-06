@@ -5,18 +5,13 @@
         .module('app.services')
         .factory('$api', factory);
 
-    factory.$inject = ['$rootScope','$websocket'];
+    factory.$inject = ['$rootScope', '$ws'];
 
-    var CMD = {
-        ledChange: 1,
-        ledChanged: 2
-    }
-
-    function factory($rootScope, $websocket) {
+    function factory($rootScope, $ws) {
 
         var service = {};
 
-        var ws = $websocket('ws://192.168.31.50/ws');
+        var ws = $ws.createInstance();
         var _send = function (json) {
 
             for (const key in json) {

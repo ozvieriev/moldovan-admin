@@ -119,16 +119,16 @@ gulp.task('gziph', () => {
         console.log(error);
       });
 
-      var stream = fs.readFileSync(file.path);
+      var fileStream = fs.readFileSync(file.path);
 
-      streamWriter.write(`#define ${hFileName}_len ${stream.length} \n`);
+      streamWriter.write(`#define ${hFileName}_len ${fileStream.length} \n`);
       streamWriter.write(`const uint8_t ${hFileName}[] PROGMEM = {`)
 
-      for (var index = 0; index < stream.length; index++) {
+      for (var index = 0; index < fileStream.length; index++) {
 
-        streamWriter.write('0x' + ('00' + stream[index].toString(16)).slice(-2));
+        streamWriter.write('0x' + ('00' + fileStream[index].toString(16)).slice(-2));
 
-        if (index < stream.length - 1)
+        if (index < fileStream.length - 1)
           streamWriter.write(',');
       }
 

@@ -35,13 +35,12 @@ angular.module('app', ['ngRoute',
 
         $scope.uiRange = 0;
         $scope.serverRange = 0;
-        
+
         $rootScope.$on('ws:event:state', function (event, json) {
 
             if (typeof json.g1 === 'undefined')
                 return;
 
-            $scope.uiRange = json.g1;
             $scope.serverRange = json.g1;
         });
     };
@@ -225,18 +224,13 @@ angular.module('app', ['ngRoute',
         .module('app.services')
         .factory('$api', factory);
 
-    factory.$inject = ['$rootScope','$websocket'];
+    factory.$inject = ['$rootScope', '$ws'];
 
-    var CMD = {
-        ledChange: 1,
-        ledChanged: 2
-    }
-
-    function factory($rootScope, $websocket) {
+    function factory($rootScope, $ws) {
 
         var service = {};
 
-        var ws = $websocket('ws://192.168.31.50/ws');
+        var ws = $ws.createInstance();
         var _send = function (json) {
 
             for (const key in json) {
@@ -348,6 +342,31 @@ angular.module('app', ['ngRoute',
         service.serverError = function () {
 
             _notify('error', { title: 'Error', content: 'An error has occured. Please try again or contact us.' });
+        };
+
+        return service;
+    };
+})();
+(function () {
+    'use strict';
+
+    angular
+        .module('app.services')
+        .factory('$ws', factory);
+
+    factory.$inject = ['$websocket'];
+
+    function factory($websocket) {
+
+        var service = {};
+
+        service.createInstance = function () {
+
+            var hostname = window.location.hostname;
+            if (window.location.hostname === 'localhost' && window.location.port === '3000')
+                hostname = '192.168.31.50';
+
+            return $websocket(`ws://${hostname}/ws`);
         };
 
         return service;
