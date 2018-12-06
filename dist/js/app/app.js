@@ -27,11 +27,26 @@ angular.module('app', ['ngRoute',
     angular.module('app.controllers')
         .controller('controlController', controller);
 
-    controller.$inject = ['$scope', '$dict', '$api'];
+    controller.$inject = ['$rootScope', '$scope', '$api'];
 
-    function controller($scope, $dict, $api) {
+    function controller($rootScope, $scope, $api) {
 
-        $scope.range = 0;
+        $scope.$api = $api;
+
+        $scope.uiRange = 0;
+        $scope.serverRange = 0;
+
+        $scope.uiChange = function(){
+
+            $api.ctrl.change({g1: $scope.uiRange})
+        };
+        $rootScope.$on('ws:event:state', function (event, json) {
+
+            if (typeof json.g1 === 'undefined')
+                return;
+
+            $scope.serverRange = json.g1;
+        });
     };
 
 })();
@@ -213,25 +228,33 @@ angular.module('app', ['ngRoute',
         .module('app.services')
         .factory('$api', factory);
 
-    factory.$inject = ['$websocket'];
+    factory.$inject = ['$rootScope','$websocket'];
 
     var CMD = {
         ledChange: 1,
         ledChanged: 2
     }
 
-    function factory($websocket) {
+    function factory($rootScope, $websocket) {
 
         var service = {};
 
         var ws = $websocket('ws://192.168.31.50/ws');
         var _send = function (json) {
 
+            for (const key in json) {
+
+                let value = json[key];
+                if (typeof value === 'boolean')
+                    json[key] = +value;
+            }
+
             ws.send(JSON.stringify(json));
         };
         var _onCommand = function (json) {
 
-            debugger;
+            console.log(json);
+            $rootScope.$emit(`ws:event:${json.cmd}`, json);
         };
 
         ws.onMessage(function (response) {
@@ -242,7 +265,7 @@ angular.module('app', ['ngRoute',
             var json = {};
             try { json = JSON.parse(response.data); }
             catch{ return console.warn('WS: Can not desiarilize the response', response.data); }
-            
+
             if (!json.cmd)
                 return console.warn('WS: Unknown command', json);
 
@@ -259,6 +282,14 @@ angular.module('app', ['ngRoute',
                 value = +value;
 
             _send({ cmd: CMD.ledChange, args: [index, value] });
+        };
+
+        service.ctrl = {};
+        service.ctrl.change = function (json) {
+
+            json.cmd = 'ctrl';
+
+            _send(json);
         };
 
         return service;

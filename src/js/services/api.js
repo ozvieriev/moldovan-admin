@@ -5,25 +5,33 @@
         .module('app.services')
         .factory('$api', factory);
 
-    factory.$inject = ['$websocket'];
+    factory.$inject = ['$rootScope','$websocket'];
 
     var CMD = {
         ledChange: 1,
         ledChanged: 2
     }
 
-    function factory($websocket) {
+    function factory($rootScope, $websocket) {
 
         var service = {};
 
         var ws = $websocket('ws://192.168.31.50/ws');
         var _send = function (json) {
 
+            for (const key in json) {
+
+                let value = json[key];
+                if (typeof value === 'boolean')
+                    json[key] = +value;
+            }
+
             ws.send(JSON.stringify(json));
         };
         var _onCommand = function (json) {
 
-            debugger;
+            console.log(json);
+            $rootScope.$emit(`ws:event:${json.cmd}`, json);
         };
 
         ws.onMessage(function (response) {
@@ -34,7 +42,7 @@
             var json = {};
             try { json = JSON.parse(response.data); }
             catch{ return console.warn('WS: Can not desiarilize the response', response.data); }
-            
+
             if (!json.cmd)
                 return console.warn('WS: Unknown command', json);
 
@@ -51,6 +59,14 @@
                 value = +value;
 
             _send({ cmd: CMD.ledChange, args: [index, value] });
+        };
+
+        service.ctrl = {};
+        service.ctrl.change = function (json) {
+
+            json.cmd = 'ctrl';
+
+            _send(json);
         };
 
         return service;
