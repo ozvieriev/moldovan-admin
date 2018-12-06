@@ -13,16 +13,13 @@
 
         $scope.uiRange = 0;
         $scope.serverRange = 0;
-
-        $scope.uiChange = function(){
-
-            $api.ctrl.change({g1: $scope.uiRange})
-        };
+        
         $rootScope.$on('ws:event:state', function (event, json) {
 
             if (typeof json.g1 === 'undefined')
                 return;
 
+            $scope.uiRange = json.g1;
             $scope.serverRange = json.g1;
         });
     };
