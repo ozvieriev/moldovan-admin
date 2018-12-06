@@ -42,7 +42,7 @@ angular.module('app', ['ngRoute',
                 return;
 
             $scope.uiRange = json.g1;
-            $scope.serverRange = json.g1;
+            $scope.serverRange = json.g1; 
         });
     };
 
