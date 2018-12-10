@@ -62,10 +62,19 @@ gulp.task('css:admin-lte', () => {
     //.pipe(minifyCSS())
     .pipe(gulp.dest('dist/css/vendor'))
 });
+
+gulp.task('css:font-awesome', () => {
+  return gulp.src([
+    'node_modules/font-awesome/css/font-awesome.min.css'
+  ])
+    .pipe(concat('font-awesome.min.css'))
+    //.pipe(minifyCSS())
+    .pipe(gulp.dest('dist/css/vendor'))
+});
 gulp.task('css:app:watch', () => {
   return gulp.watch('src/css/app/**/*.css', gulp.series('css:app'));
 });
-gulp.task('css', gulp.series(gulp.parallel('css:app', 'css:bootstrap', 'css:admin-lte')));
+gulp.task('css', gulp.series(gulp.parallel('css:app', 'css:bootstrap', 'css:admin-lte', 'css:font-awesome')));
 
 gulp.task('js:app', () => {
 
@@ -88,7 +97,18 @@ gulp.task('js:app:watch', () => {
 });
 gulp.task('js', gulp.series(gulp.parallel('js:app', 'js:angular')));
 
-gulp.task('build', gulp.series(gulp.parallel('html', 'css', 'js')));
+
+gulp.task('font:font-awesome', () => {
+
+  return gulp.src([
+    'node_modules/font-awesome/fonts/*.*'
+  ])
+    .pipe(gulp.dest('dist/css/fonts'))
+});
+gulp.task('font', gulp.series(gulp.parallel('font:font-awesome')));
+
+
+gulp.task('build', gulp.series(gulp.parallel('html', 'css', 'js', 'font')));
 gulp.task('watch', gulp.series(gulp.parallel(
   'css:app:watch',
   'html:index:watch', 'html:ui:watch',
