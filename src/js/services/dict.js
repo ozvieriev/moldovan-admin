@@ -5,9 +5,9 @@
         .module('app.services')
         .factory('$dict', factory);
 
-    factory.$inject = ['$http'];
+    factory.$inject = [];
 
-    function factory($http) {
+    function factory() {
 
         var service = {};
 

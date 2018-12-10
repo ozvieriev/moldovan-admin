@@ -1,6 +1,4 @@
-//var angular = require('lib/angularjs')
-
-var viewsController = 'views/';
+var viewsController = 'ui/pages/';
 
 angular.module('app.services', ['ngWebSocket']);
 angular.module('app.controllers', []);
@@ -11,12 +9,28 @@ angular.module('app', ['ngRoute',
     'app.services', 'app.controllers', 'app.directives', 'app.filters'])
     .config(function ($routeProvider) {
 
+        var _when = function (href, controller) {
+
+            $routeProvider.
+                when(`/${href}`, {
+                    templateUrl: `${viewsController}${href}.html`,
+                    controller: `${controller}Controller`
+                });
+        };
+
         $routeProvider.
             when('/control', {
                 templateUrl: `${viewsController}control.html`,
                 controller: 'controlController'
             }).
             otherwise({ redirectTo: '/control' });
+
+        _when('settings/hardware-settings', 'settingsHardwareSettings');
+        _when('settings/mqtt-settings', 'settingsMqttSettings');
+        _when('settings/ntp-time-settings', 'settingsNtpTimeSettings');
+        _when('settings/update', 'settingsUpdate');
+        _when('settings/wireless-network', 'settingsWirelessNetwork');
+
     });
 
 //https://github.com/modularcode/modular-admin-angularjs/blob/master/src/_main.js
@@ -115,6 +129,63 @@ angular.module('app', ['ngRoute',
 
         this.timeoutTime = timeoutTime;
     };
+
+})();
+(function () {
+    'use strict';
+
+    angular
+        .module('app.directives')
+        .directive('ngSidebar', directive);
+
+    function directive() {
+
+        return {
+            link: link,
+            restrict: 'A',
+            replace: true,
+            templateUrl: 'ui/directives/sidebar.html',
+            scope: {}
+        };
+
+        function link(scope, element, attrs) {
+
+            scope.items = viewSidebarBuilder.build();
+        }
+    };
+
+    var viewSidebar = function (id, title, href) {
+
+        this.id = id;
+        this.title = title;
+        this.href = href || null;
+        this.items = [];
+    };
+    viewSidebar.prototype.addItems = function (items) {
+
+        angular.forEach(items, function (item) {
+            this.push(item);
+        }, this.items);
+
+        return this;
+    };
+
+    var viewSidebarBuilder = function () { };
+    viewSidebarBuilder.build = function () {
+
+        return [
+            new viewSidebar('control', 'Control', '#!control'),
+            new viewSidebar('settings', 'Settings')
+                .addItems([
+                    new viewSidebar('wireless-network', 'Wireless Network', '#!settings/wireless-network'),
+                    new viewSidebar('hardware-settings', 'Hardware Settings', '#!settings/hardware-settings'),
+                    new viewSidebar('mqtt-settings', 'MQTT Settings', '#!settings/mqtt-settings'),
+                    new viewSidebar('ntp-time-settings', 'NTP (Time) Settings', '#!settings/ntp-time-settings'),
+                    new viewSidebar('update', 'Update', '#!settings/update')
+                ])
+        ];
+    };
+
 
 })();
 (function () {
@@ -293,9 +364,9 @@ angular.module('app', ['ngRoute',
         .module('app.services')
         .factory('$dict', factory);
 
-    factory.$inject = ['$http'];
+    factory.$inject = [];
 
-    function factory($http) {
+    function factory() {
 
         var service = {};
 
@@ -371,4 +442,79 @@ angular.module('app', ['ngRoute',
 
         return service;
     };
+})();
+(function () {
+
+    'use strict';
+
+    angular.module('app.controllers')
+        .controller('settingsHardwareSettingsController', controller);
+
+    controller.$inject = ['$rootScope', '$scope', '$api'];
+
+    function controller($rootScope, $scope, $api) {
+
+        $scope.$api = $api;
+    };
+
+})();
+(function () {
+
+    'use strict';
+
+    angular.module('app.controllers')
+        .controller('settingsMqttSettingsController', controller);
+
+    controller.$inject = ['$rootScope', '$scope', '$api'];
+
+    function controller($rootScope, $scope, $api) {
+
+        $scope.$api = $api;
+    };
+
+})();
+(function () {
+
+    'use strict';
+
+    angular.module('app.controllers')
+        .controller('settingsNtpTimeSettingsController', controller);
+
+    controller.$inject = ['$rootScope', '$scope', '$api'];
+
+    function controller($rootScope, $scope, $api) {
+
+        $scope.$api = $api;
+    };
+
+})();
+(function () {
+
+    'use strict';
+
+    angular.module('app.controllers')
+        .controller('settingsUpdateController', controller);
+
+    controller.$inject = ['$rootScope', '$scope', '$api'];
+
+    function controller($rootScope, $scope, $api) {
+
+        $scope.$api = $api;
+    };
+
+})();
+(function () {
+
+    'use strict';
+
+    angular.module('app.controllers')
+        .controller('settingsWirelessNetworkController', controller);
+
+    controller.$inject = ['$rootScope', '$scope', '$api'];
+
+    function controller($rootScope, $scope, $api) {
+
+        $scope.$api = $api;
+    };
+
 })();

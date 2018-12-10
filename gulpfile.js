@@ -1,31 +1,41 @@
-var fs = require('fs');
-var gulp = require('gulp');
-var path = require('path');
-var gzip = require('gulp-gzip');
-var concat = require('gulp-concat');
-var flatmap = require('gulp-flatmap');
-var mkdirRecursive = require('mkdir-recursive');
+const fs = require('fs');
+const gulp = require('gulp');
+const path = require('path');
+const gzip = require('gulp-gzip');
+const concat = require('gulp-concat');
+const flatmap = require('gulp-flatmap');
+const htmlmin = require('gulp-htmlmin');
+const mkdirRecursive = require('mkdir-recursive');
 
 var browserSync = require('browser-sync').create();
 var reload = browserSync.reload;
 
+const htmlminOptions = {
+  collapseWhitespace: true,
+  removeComments: true,
+  sortAttributes: true,
+  sortClassName: true
+};
+
 gulp.task('html:index', () => {
 
   return gulp.src('src/index.html')
+    .pipe(htmlmin(htmlminOptions))
     .pipe(gulp.dest('dist'))
 });
-gulp.task('html:views', () => {
+gulp.task('html:ui', () => {
 
-  return gulp.src('src/views/**/*.html')
-    .pipe(gulp.dest('dist/views'))
+  return gulp.src('src/ui/**/*.html')
+    .pipe(htmlmin(htmlminOptions))
+    .pipe(gulp.dest('dist/ui'))
 });
 gulp.task('html:index:watch', () => {
   return gulp.watch('src/index.html', gulp.series('html:index'));
 });
-gulp.task('html:views:watch', () => {
-  return gulp.watch('src/views/**/*.html', gulp.series('html:views'));
+gulp.task('html:ui:watch', () => {
+  return gulp.watch('src/ui/**/*.html', gulp.series('html:ui'));
 });
-gulp.task('html', gulp.series(gulp.parallel('html:index', 'html:views')));
+gulp.task('html', gulp.series(gulp.parallel('html:index', 'html:ui')));
 
 gulp.task('css:app', () => {
   return gulp.src([
@@ -81,7 +91,7 @@ gulp.task('js', gulp.series(gulp.parallel('js:app', 'js:angular')));
 gulp.task('build', gulp.series(gulp.parallel('html', 'css', 'js')));
 gulp.task('watch', gulp.series(gulp.parallel(
   'css:app:watch',
-  'html:index:watch', 'html:views:watch',
+  'html:index:watch', 'html:ui:watch',
   'js:app:watch')));
 
 gulp.task('serve', function () {
