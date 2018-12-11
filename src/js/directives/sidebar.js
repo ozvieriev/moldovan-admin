@@ -11,7 +11,7 @@
             link: link,
             restrict: 'A',
             replace: true,
-            templateUrl: 'ui/directives/sidebar.html',
+            templateUrl: 'directives/sidebar.html',
             scope: {}
         };
 

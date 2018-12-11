@@ -1,4 +1,4 @@
-var viewsController = 'ui/pages/';
+var viewsController = 'pages/';
 
 angular.module('app.services', ['ngWebSocket']);
 angular.module('app.controllers', []);
@@ -7,6 +7,16 @@ angular.module('app.filters', []);
 
 angular.module('app', ['ngRoute',
     'app.services', 'app.controllers', 'app.directives', 'app.filters'])
+    .run(function($templateCache){
+
+        $('script[type="text/ng-template"]').each(function(){
+
+            var element = angular.element(this);
+            $templateCache.put(element.attr('id'), element.html());
+        });
+
+        //<script id="directives/sidebar.html" type="text/ng-template"><
+    })
     .config(function ($routeProvider) {
 
         var _when = function (href, controller) {

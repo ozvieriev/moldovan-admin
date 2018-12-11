@@ -13,7 +13,7 @@
             link: link,
             restrict: 'A',
             replace: true,
-            templateUrl: 'ui/directives/debug.html',
+            templateUrl: 'directives/debug.html',
             scope: {}
         };
 
