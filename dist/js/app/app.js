@@ -420,7 +420,7 @@ angular.module('app', ['ngRoute',
 
         service.wifi = {};
         service.wifi.scan = function () {
-            service.send({ cmd: 'status', wifi: 'scan' });
+            service.send({ cmd: 'state', wifi: 'scan' });
         };
 
         return service;
@@ -608,6 +608,8 @@ angular.module('app', ['ngRoute',
             new viewAutoDisableWifi('15 min', 15),
             new viewAutoDisableWifi('30 min', 30),
         ];
+        $scope.wifis = null;
+
         $scope.model = {
             wifiMode: 'access-point',
             ssid: 'SMC',
@@ -616,12 +618,32 @@ angular.module('app', ['ngRoute',
             isUseDHCP: true,
             autoDisableWifi: $scope.autoDisableWifis[0]
         };
+
+        $rootScope.$on('ws:event:wifi-list', function (event, json) {
+
+            if (typeof json.networks === 'undefined')
+                return;
+
+            var networks = [];
+            angular.forEach(json.networks, function (item) {
+                this.push(new viewNetwork(item));
+            }, networks);
+            $scope.networks = networks;
+        });
     };
 
     var viewAutoDisableWifi = function (name, value) {
 
         this.name = name;
         this.value = value;
+    };
+    var viewNetwork = function (json) {
+
+        this.ssid = json.ssid;
+        this.bssid = json.bssid;
+        this.rssi = json.rssi;
+
+        this.name = `BSSID: ${this.bssid}, RSSI: ${this.rssi}, Network: ${this.ssid}`;
     };
 
 

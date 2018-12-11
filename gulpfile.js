@@ -101,7 +101,7 @@ gulp.task('js', gulp.series(gulp.parallel('js:app', 'js:angular')));
 gulp.task('font:font-awesome', () => {
 
   return gulp.src([
-    'node_modules/font-awesome/fonts/*.*'
+    'node_modules/font-awesome/fonts/fontawesome-webfont.woff2'
   ])
     .pipe(gulp.dest('dist/css/fonts'))
 });

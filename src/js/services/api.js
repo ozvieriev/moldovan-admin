@@ -56,7 +56,7 @@
 
         service.wifi = {};
         service.wifi.scan = function () {
-            service.send({ cmd: 'status', wifi: 'scan' });
+            service.send({ cmd: 'state', wifi: 'scan' });
         };
 
         return service;
