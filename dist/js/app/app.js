@@ -107,8 +107,8 @@ angular.module('app', ['ngRoute',
             });
 
             var $textarea = element.find('textarea');
-            element.css({ position: 'fixed', right: 0, top: '50px', width: '500px' });
-            $textarea.css({ resize: 'none', 'background-color': '#000', color: '#0f0', 'font-size': '80%', width: '100%', height: '500px', 'line-height': '100%' });
+            element.css({ position: 'fixed', right: '20px', bottom: 0, width: '500px' });
+            $textarea.css({ resize: 'none', 'background-color': '#000', color: '#0f0', 'font-size': '80%', width: '100%', height: '250px', 'line-height': '100%' });
         }
     };
 
