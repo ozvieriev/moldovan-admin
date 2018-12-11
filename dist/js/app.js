@@ -1,5 +1,3 @@
-var viewsController = 'pages/';
-
 angular.module('app.services', ['ngWebSocket']);
 angular.module('app.controllers', []);
 angular.module('app.directives', []);
@@ -7,15 +5,12 @@ angular.module('app.filters', []);
 
 angular.module('app', ['ngRoute',
     'app.services', 'app.controllers', 'app.directives', 'app.filters'])
-    .run(function($templateCache){
+    .run(function ($templateCache) {
 
-        $('script[type="text/ng-template"]').each(function(){
-
+        $('script[type="text/ng-template"]').each(function () {
             var element = angular.element(this);
             $templateCache.put(element.attr('id'), element.html());
         });
-
-        //<script id="directives/sidebar.html" type="text/ng-template"><
     })
     .config(function ($routeProvider) {
 
@@ -23,14 +18,14 @@ angular.module('app', ['ngRoute',
 
             $routeProvider.
                 when(`/${href}`, {
-                    templateUrl: `${viewsController}${href}.html`,
+                    templateUrl: `pages/${href}.html`,
                     controller: `${controller}Controller`
                 });
         };
 
         $routeProvider.
             when('/control', {
-                templateUrl: `${viewsController}control.html`,
+                templateUrl: `pages/control.html`,
                 controller: 'controlController'
             }).
             otherwise({ redirectTo: '/control' });

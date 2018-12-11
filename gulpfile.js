@@ -21,7 +21,7 @@ const htmlminOptions = {
 gulp.task('html:app', () => {
 
   return gulp.src(['src/index.html', 'src/ui/**/*.html'])
-
+    .pipe(htmlmin(htmlminOptions))
     .pipe(modifyFile((content, path, file) => {
 
       var relativePath = file.path.substr(file.base.length + 1);
@@ -33,7 +33,6 @@ gulp.task('html:app', () => {
 
       return `<script type="text/ng-template" id="${relativePath}">${content}</script>`;
     }))
-    .pipe(htmlmin(htmlminOptions))
     .pipe(concat('index.html'))
     .pipe(gulp.dest('dist'))
 });
@@ -85,27 +84,23 @@ gulp.task('js:app', () => {
 
   return gulp.src('src/js/**/*.js')
     .pipe(concat('app.js'))
-    .pipe(gulp.dest('dist/js/app'))
+    .pipe(gulp.dest('dist/js'))
 });
-gulp.task('js:angular', () => {
+gulp.task('js:vendor', () => {
 
   return gulp.src([
+    'node_modules/jquery/dist/jquery.min.js',
     'node_modules/angular/angular.min.js',
     'node_modules/angular-route/angular-route.min.js',
     'node_modules/angular-websocket/dist/angular-websocket.min.js'
   ])
-    .pipe(concat('angular.min.js'))
-    .pipe(gulp.dest('dist/js/vendor'))
-});
-gulp.task('js:jquery', () => {
-
-  return gulp.src(['node_modules/jquery/dist/jquery.min.js'])
-    .pipe(gulp.dest('dist/js/vendor'))
+    .pipe(concat('vendor.min.js'))
+    .pipe(gulp.dest('dist/js'))
 });
 gulp.task('js:app:watch', () => {
-  return gulp.watch('src/js/**/*.js', gulp.series('js:app'));
+  return gulp.watch('src/js/app.js', gulp.series('js:app'));
 });
-gulp.task('js', gulp.series(gulp.parallel('js:app', 'js:jquery', 'js:angular')));
+gulp.task('js', gulp.series(gulp.parallel('js:app', 'js:vendor')));
 
 
 gulp.task('font:font-awesome', () => {
