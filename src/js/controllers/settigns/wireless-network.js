@@ -5,9 +5,9 @@
     angular.module('app.controllers')
         .controller('settingsWirelessNetworkController', controller);
 
-    controller.$inject = ['$rootScope', '$scope', '$api', '$dict'];
+    controller.$inject = ['$rootScope', '$scope', '$api'];
 
-    function controller($rootScope, $scope, $api, $dict) {
+    function controller($rootScope, $scope, $api) {
 
         $scope.$api = $api;
 

@@ -47,23 +47,16 @@
             $rootScope.$emit(`ws:send`, json);
         };
 
-        service.led = {};
-        service.led.change = function (json) {
-
-            var index = json.index;
-            var value = json.value;
-
-            if (typeof value === 'boolean')
-                value = +value;
-
-            service.send({ cmd: CMD.ledChange, args: [index, value] });
-        };
-
         service.ctrl = {};
         service.ctrl.change = function (json) {
 
             json.cmd = 'ctrl';
             service.send(json);
+        };
+
+        service.wifi = {};
+        service.wifi.scan = function () {
+            service.send({ cmd: 'status', wifi: 'scan' });
         };
 
         return service;
