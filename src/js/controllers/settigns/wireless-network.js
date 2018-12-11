@@ -22,6 +22,8 @@
         ];
         $scope.model = {
             wifiMode: 'access-point',
+            ssid: 'SMC',
+            bssid: 'aa:bb:Cc:dd:ee',
             isHideNetworkName: false,
             isUseDHCP: true,
             autoDisableWifi: $scope.autoDisableWifis[0]

@@ -1,0 +1,54 @@
+(function () {
+    'use strict';
+
+    angular
+        .module('app.directives')
+        .directive('ngDebug', directive);
+
+    directive.$inject = ['$rootScope', '$api'];
+
+    function directive($rootScope, $api) {
+
+        return {
+            link: link,
+            restrict: 'A',
+            replace: true,
+            templateUrl: 'ui/directives/debug.html',
+            scope: {}
+        };
+
+        function link(scope, element, attrs) {
+
+            scope.model = { log: '', message: '' };
+
+            var _log = function (log) {
+
+                var dateTime = new Date();
+
+                var dateTimeFormat = `${dateTime.getHours()}:${dateTime.getMinutes()}:${dateTime.getSeconds()}`;
+                var line = `${dateTimeFormat} - ${log}\n`;
+
+                scope.model.log = line + scope.model.log;
+            };
+
+            scope.send = function () {
+
+                try { $api.send(JSON.parse(scope.model.message)); }
+                catch (error) { _log(`error - ${error}`); }
+            };
+
+            $rootScope.$on('ws:send', function (event, json) {
+                _log(`ws:send - ${JSON.stringify(json)}`);
+            });
+            $rootScope.$on('ws:event', function (event, json) {
+                _log(`ws:event - ${JSON.stringify(json)}`);
+            });
+
+            var $textarea = element.find('textarea');
+            element.css({ position: 'fixed', right: 0, top: '50px', width: '500px' });
+            $textarea.css({ resize: 'none', 'background-color': '#000', color: '#0f0', 'font-size': '80%', width: '100%', height: '500px', 'line-height': '100%' });
+        }
+    };
+
+
+})();

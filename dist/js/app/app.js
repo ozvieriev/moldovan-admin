@@ -61,6 +61,60 @@ angular.module('app', ['ngRoute',
 
 })();
 (function () {
+    'use strict';
+
+    angular
+        .module('app.directives')
+        .directive('ngDebug', directive);
+
+    directive.$inject = ['$rootScope', '$api'];
+
+    function directive($rootScope, $api) {
+
+        return {
+            link: link,
+            restrict: 'A',
+            replace: true,
+            templateUrl: 'ui/directives/debug.html',
+            scope: {}
+        };
+
+        function link(scope, element, attrs) {
+
+            scope.model = { log: '', message: '' };
+
+            var _log = function (log) {
+
+                var dateTime = new Date();
+
+                var dateTimeFormat = `${dateTime.getHours()}:${dateTime.getMinutes()}:${dateTime.getSeconds()}`;
+                var line = `${dateTimeFormat} - ${log}\n`;
+
+                scope.model.log = line + scope.model.log;
+            };
+
+            scope.send = function () {
+
+                try { $api.send(JSON.parse(scope.model.message)); }
+                catch (error) { _log(`error - ${error}`); }
+            };
+
+            $rootScope.$on('ws:send', function (event, json) {
+                _log(`ws:send - ${JSON.stringify(json)}`);
+            });
+            $rootScope.$on('ws:event', function (event, json) {
+                _log(`ws:event - ${JSON.stringify(json)}`);
+            });
+
+            var $textarea = element.find('textarea');
+            element.css({ position: 'fixed', right: 0, top: '50px', width: '500px' });
+            $textarea.css({ resize: 'none', 'background-color': '#000', color: '#0f0', 'font-size': '80%', width: '100%', height: '500px', 'line-height': '100%' });
+        }
+    };
+
+
+})();
+(function () {
 
     'use strict';
     angular
@@ -322,20 +376,10 @@ angular.module('app', ['ngRoute',
         var service = {};
 
         var ws = $ws.createInstance();
-        var _send = function (json) {
-
-            for (const key in json) {
-
-                let value = json[key];
-                if (typeof value === 'boolean')
-                    json[key] = +value;
-            }
-
-            ws.send(JSON.stringify(json));
-        };
         var _onCommand = function (json) {
 
             console.log(json);
+            $rootScope.$emit(`ws:event`, json);
             $rootScope.$emit(`ws:event:${json.cmd}`, json);
         };
 
@@ -354,6 +398,19 @@ angular.module('app', ['ngRoute',
             _onCommand(json);
         });
 
+        service.send = function (json) {
+
+            for (var key in json) {
+
+                var value = json[key];
+                if (typeof value === 'boolean')
+                    json[key] = +value;
+            }
+
+            ws.send(JSON.stringify(json));
+            $rootScope.$emit(`ws:send`, json);
+        };
+
         service.led = {};
         service.led.change = function (json) {
 
@@ -363,15 +420,14 @@ angular.module('app', ['ngRoute',
             if (typeof value === 'boolean')
                 value = +value;
 
-            _send({ cmd: CMD.ledChange, args: [index, value] });
+            service.send({ cmd: CMD.ledChange, args: [index, value] });
         };
 
         service.ctrl = {};
         service.ctrl.change = function (json) {
 
             json.cmd = 'ctrl';
-
-            _send(json);
+            service.send(json);
         };
 
         return service;
@@ -561,6 +617,8 @@ angular.module('app', ['ngRoute',
         ];
         $scope.model = {
             wifiMode: 'access-point',
+            ssid: 'SMC',
+            bssid: 'aa:bb:Cc:dd:ee',
             isHideNetworkName: false,
             isUseDHCP: true,
             autoDisableWifi: $scope.autoDisableWifis[0]

@@ -12,20 +12,10 @@
         var service = {};
 
         var ws = $ws.createInstance();
-        var _send = function (json) {
-
-            for (const key in json) {
-
-                let value = json[key];
-                if (typeof value === 'boolean')
-                    json[key] = +value;
-            }
-
-            ws.send(JSON.stringify(json));
-        };
         var _onCommand = function (json) {
 
             console.log(json);
+            $rootScope.$emit(`ws:event`, json);
             $rootScope.$emit(`ws:event:${json.cmd}`, json);
         };
 
@@ -44,6 +34,19 @@
             _onCommand(json);
         });
 
+        service.send = function (json) {
+
+            for (var key in json) {
+
+                var value = json[key];
+                if (typeof value === 'boolean')
+                    json[key] = +value;
+            }
+
+            ws.send(JSON.stringify(json));
+            $rootScope.$emit(`ws:send`, json);
+        };
+
         service.led = {};
         service.led.change = function (json) {
 
@@ -53,15 +56,14 @@
             if (typeof value === 'boolean')
                 value = +value;
 
-            _send({ cmd: CMD.ledChange, args: [index, value] });
+            service.send({ cmd: CMD.ledChange, args: [index, value] });
         };
 
         service.ctrl = {};
         service.ctrl.change = function (json) {
 
             json.cmd = 'ctrl';
-
-            _send(json);
+            service.send(json);
         };
 
         return service;
