@@ -4,9 +4,9 @@ const path = require('path');
 const gzip = require('gulp-gzip');
 const clean = require('gulp-clean');
 const concat = require('gulp-concat');
+const change = require('gulp-change');
 const flatmap = require('gulp-flatmap');
 const htmlmin = require('gulp-htmlmin');
-const modifyFile = require('gulp-modify-file');
 const mkdirRecursive = require('mkdir-recursive');
 
 var browserSync = require('browser-sync').create();
@@ -23,9 +23,9 @@ gulp.task('html:app', () => {
 
   return gulp.src(['src/index.html', 'src/ui/**/*.html'])
     .pipe(htmlmin(htmlminOptions))
-    .pipe(modifyFile((content, path, file) => {
+    .pipe(change(function (content) {
 
-      var relativePath = file.path.substr(file.base.length + 1);
+      var relativePath = this.file.path.substr(this.file.base.length + 1);
 
       if (relativePath === 'index.html')
         return content;
