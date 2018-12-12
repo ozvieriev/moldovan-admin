@@ -7,9 +7,9 @@ angular.module('app', ['ngRoute',
     'app.services', 'app.controllers', 'app.directives', 'app.filters'])
     .run(function ($templateCache) {
 
-        $('script[type="text/ng-template"]').each(function () {
-            var element = angular.element(this);
-            $templateCache.put(element.attr('id'), element.html());
+        var tempaltes = document.querySelectorAll('script[type="text/ng-template"]');
+        angular.forEach(tempaltes, function (template) {
+            $templateCache.put(template.id, template.innerHTML);
         });
     })
     .config(function ($routeProvider) {

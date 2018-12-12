@@ -5,11 +5,11 @@
     angular.module('app.controllers')
         .controller('controlController', controller);
 
-    controller.$inject = ['$rootScope', '$scope', '$api'];
+    controller.$inject = ['$rootScope', '$scope', '$ws'];
 
-    function controller($rootScope, $scope, $api) {
+    function controller($rootScope, $scope, $ws) {
 
-        $scope.$api = $api;
+        $scope.$ws = $ws;
 
         $scope.uiRange = 0;
         $scope.serverRange = 0;

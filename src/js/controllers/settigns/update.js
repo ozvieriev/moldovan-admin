@@ -5,11 +5,15 @@
     angular.module('app.controllers')
         .controller('settingsUpdateController', controller);
 
-    controller.$inject = ['$rootScope', '$scope', '$api'];
+    controller.$inject = ['$scope', '$api'];
 
-    function controller($rootScope, $scope, $api) {
+    function controller($scope, $api) {
 
-        $scope.$api = $api;
+        $scope.model = {};
+        $scope.update = function () {
+
+            $api.update($scope.files);
+        };
     };
 
 })();

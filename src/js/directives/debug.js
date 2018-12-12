@@ -5,9 +5,9 @@
         .module('app.directives')
         .directive('ngDebug', directive);
 
-    directive.$inject = ['$rootScope', '$api'];
+    directive.$inject = ['$rootScope', '$ws'];
 
-    function directive($rootScope, $api) {
+    function directive($rootScope, $ws) {
 
         return {
             link: link,
@@ -33,7 +33,7 @@
 
             scope.send = function () {
 
-                try { $api.send(JSON.parse(scope.model.message)); }
+                try { $ws.send(JSON.parse(scope.model.message)); }
                 catch (error) { _log(`error - ${error}`); }
             };
 

@@ -46,40 +46,23 @@ gulp.task('css:app', () => {
   return gulp.src([
     'src/css/app/**/*.css'
   ])
-    .pipe(concat('style.css'))
+    .pipe(concat('app.css'))
     //.pipe(minifyCSS())
-    .pipe(gulp.dest('dist/css/app'))
+    .pipe(gulp.dest('dist/css'))
 });
-gulp.task('css:bootstrap', () => {
+gulp.task('css:vendor', () => {
   return gulp.src([
-    'node_modules/bootstrap/dist/css/bootstrap.min.css'
-  ])
-    .pipe(concat('bootstrap.min.css'))
-    //.pipe(minifyCSS())
-    .pipe(gulp.dest('dist/css/vendor'))
-});
-gulp.task('css:admin-lte', () => {
-  return gulp.src([
+    'node_modules/bootstrap/dist/css/bootstrap.min.css',
     'src/css/admin-lte/css/adminlte.min.css',
     'src/css/admin-lte/css/skins/skin-blue.min.css'
   ])
-    .pipe(concat('admin-lte.min.css'))
-    //.pipe(minifyCSS())
-    .pipe(gulp.dest('dist/css/vendor'))
-});
-
-gulp.task('css:font-awesome', () => {
-  return gulp.src([
-    'node_modules/font-awesome/css/font-awesome.min.css'
-  ])
-    .pipe(concat('font-awesome.min.css'))
-    //.pipe(minifyCSS())
-    .pipe(gulp.dest('dist/css/vendor'))
+    .pipe(concat('vendor.min.css'))
+    .pipe(gulp.dest('dist/css'))
 });
 gulp.task('css:app:watch', () => {
-  return gulp.watch('src/css/app/**/*.css', gulp.series('css:app'));
+  return gulp.watch('src/css/app.css', gulp.series('css:app'));
 });
-gulp.task('css', gulp.series(gulp.parallel('css:app', 'css:bootstrap', 'css:admin-lte', 'css:font-awesome')));
+gulp.task('css', gulp.series(gulp.parallel('css:app', 'css:vendor')));
 
 gulp.task('js:app', () => {
 
@@ -90,7 +73,7 @@ gulp.task('js:app', () => {
 gulp.task('js:vendor', () => {
 
   return gulp.src([
-    'node_modules/jquery/dist/jquery.min.js',
+    //'node_modules/jquery/dist/jquery.min.js',
     'node_modules/angular/angular.min.js',
     'node_modules/angular-route/angular-route.min.js',
     'node_modules/angular-websocket/dist/angular-websocket.min.js'
@@ -104,14 +87,15 @@ gulp.task('js:app:watch', () => {
 gulp.task('js', gulp.series(gulp.parallel('js:app', 'js:vendor')));
 
 
-gulp.task('font:font-awesome', () => {
+gulp.task('font:bootstrap', () => {
 
   return gulp.src([
-    'node_modules/font-awesome/fonts/fontawesome-webfont.woff2'
+    'node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2',
+
   ])
     .pipe(gulp.dest('dist/css/fonts'))
 });
-gulp.task('font', gulp.series(gulp.parallel('font:font-awesome')));
+gulp.task('font', gulp.series(gulp.parallel('font:bootstrap')));
 
 
 gulp.task('build', gulp.series(gulp.parallel('html', 'css', 'js', 'font')));
@@ -131,7 +115,7 @@ gulp.task('serve', function () {
   browserSync.init({ server: { baseDir: "./dist" } });
 
   gulp
-    .watch(['dist/**/*.html', 'dist/**/*.css', 'dist/**/*.js'])
+    .watch(['dist/index.html', 'dist/**/*.css', 'dist/*.js'])
     .on("change", browserSync.reload);
 });
 

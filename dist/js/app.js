@@ -7,9 +7,9 @@ angular.module('app', ['ngRoute',
     'app.services', 'app.controllers', 'app.directives', 'app.filters'])
     .run(function ($templateCache) {
 
-        $('script[type="text/ng-template"]').each(function () {
-            var element = angular.element(this);
-            $templateCache.put(element.attr('id'), element.html());
+        var tempaltes = document.querySelectorAll('script[type="text/ng-template"]');
+        angular.forEach(tempaltes, function (template) {
+            $templateCache.put(template.id, template.innerHTML);
         });
     })
     .config(function ($routeProvider) {
@@ -46,11 +46,11 @@ angular.module('app', ['ngRoute',
     angular.module('app.controllers')
         .controller('controlController', controller);
 
-    controller.$inject = ['$rootScope', '$scope', '$api'];
+    controller.$inject = ['$rootScope', '$scope', '$ws'];
 
-    function controller($rootScope, $scope, $api) {
+    function controller($rootScope, $scope, $ws) {
 
-        $scope.$api = $api;
+        $scope.$ws = $ws;
 
         $scope.uiRange = 0;
         $scope.serverRange = 0;
@@ -72,9 +72,9 @@ angular.module('app', ['ngRoute',
         .module('app.directives')
         .directive('ngDebug', directive);
 
-    directive.$inject = ['$rootScope', '$api'];
+    directive.$inject = ['$rootScope', '$ws'];
 
-    function directive($rootScope, $api) {
+    function directive($rootScope, $ws) {
 
         return {
             link: link,
@@ -100,7 +100,7 @@ angular.module('app', ['ngRoute',
 
             scope.send = function () {
 
-                try { $api.send(JSON.parse(scope.model.message)); }
+                try { $ws.send(JSON.parse(scope.model.message)); }
                 catch (error) { _log(`error - ${error}`); }
             };
 
@@ -117,6 +117,35 @@ angular.module('app', ['ngRoute',
         }
     };
 
+
+})();
+(function () {
+    'use strict';
+
+    angular
+        .module('app.directives')
+        .directive('ngFileInput', directive);
+
+    directive.$inject = ['$parse'];
+
+    function directive($parse) {
+
+        return {
+            link: link,
+            restrict: 'A'
+        };
+
+        function link($scope, element, attrs) {
+
+            element.bind('change', function () {
+
+                $parse(attrs.ngFileInput)
+                    .assign($scope, element[0].files);
+                    
+                $scope.$apply();
+            });
+        }
+    }
 
 })();
 (function () {
@@ -252,15 +281,15 @@ angular.module('app', ['ngRoute',
                 .setIcon('cogs')
                 .addItems([
                     new viewSidebar('wireless-network', 'Wireless Network', '#!settings/wireless-network')
-                        .setIcon('internet-explorer'),
+                        .setIcon('signal'),
                     new viewSidebar('hardware-settings', 'Hardware Settings', '#!settings/hardware-settings')
                         .setIcon('wrench'),
                     new viewSidebar('mqtt-settings', 'MQTT Settings', '#!settings/mqtt-settings')
                         .setIcon('cog'),
                     new viewSidebar('ntp-time-settings', 'NTP (Time) Settings', '#!settings/ntp-time-settings')
-                        .setIcon('clock-o'),
+                        .setIcon('cloud'),
                     new viewSidebar('update', 'Update', '#!settings/update')
-                        .setIcon('angle-double-up')
+                        .setIcon('upload')
                 ])
         ];
     };
@@ -374,58 +403,46 @@ angular.module('app', ['ngRoute',
         .module('app.services')
         .factory('$api', factory);
 
-    factory.$inject = ['$rootScope', '$ws'];
+    factory.$inject = ['$http', '$config'];
 
-    function factory($rootScope, $ws) {
+    function factory($http, $config) {
 
         var service = {};
 
-        var ws = $ws.createInstance();
-        var _onCommand = function (json) {
+        service.update = function (files) {
 
-            console.log(json);
-            $rootScope.$emit(`ws:event`, json);
-            $rootScope.$emit(`ws:event:${json.cmd}`, json);
+            var formData = new FormData();
+            angular.forEach(files, function (file) {
+                formData.append('file', file);
+            });
+
+            return $http.post(`http://${$config.getRemoteHost()}/update/`, formData, {
+                transformRequest: angular.identity,
+                headers: { 'Content-Type': undefined }
+            });
         };
 
-        ws.onMessage(function (response) {
+        return service;
+    };
+})();
+(function () {
+    'use strict';
 
-            if (!response || !response.data)
-                return console.warn('WS: Empty data');
+    angular
+        .module('app.services')
+        .factory('$config', factory);
 
-            var json = {};
-            try { json = JSON.parse(response.data); }
-            catch{ return console.warn('WS: Can not desiarilize the response', response.data); }
+    function factory() {
 
-            if (!json.cmd)
-                return console.warn('WS: Unknown command', json);
+        var service = {};
 
-            _onCommand(json);
-        });
+        service.getRemoteHost = function () {
 
-        service.send = function (json) {
+            var hostname = window.location.hostname;
+            if (window.location.hostname === 'localhost' && window.location.port === '3000')
+                hostname = '192.168.31.50';
 
-            for (var key in json) {
-
-                var value = json[key];
-                if (typeof value === 'boolean')
-                    json[key] = +value;
-            }
-
-            ws.send(JSON.stringify(json));
-            $rootScope.$emit(`ws:send`, json);
-        };
-
-        service.ctrl = {};
-        service.ctrl.change = function (json) {
-
-            json.cmd = 'ctrl';
-            service.send(json);
-        };
-
-        service.wifi = {};
-        service.wifi.scan = function () {
-            service.send({ cmd: 'state', wifi: 'scan' });
+            return hostname;
         };
 
         return service;
@@ -513,19 +530,58 @@ angular.module('app', ['ngRoute',
         .module('app.services')
         .factory('$ws', factory);
 
-    factory.$inject = ['$websocket'];
+    factory.$inject = ['$rootScope', '$websocket', '$config'];
 
-    function factory($websocket) {
+    function factory($rootScope, $websocket, $config) {
 
         var service = {};
 
-        service.createInstance = function () {
+        var _ws = $websocket(`ws://${$config.getRemoteHost()}/ws`);
+        var _onCommand = function (json) {
 
-            var hostname = window.location.hostname;
-            if (window.location.hostname === 'localhost' && window.location.port === '3000')
-                hostname = '192.168.31.50';
+            console.log(json);
+            $rootScope.$emit(`ws:event`, json);
+            $rootScope.$emit(`ws:event:${json.cmd}`, json);
+        };
 
-            return $websocket(`ws://${hostname}/ws`);
+        _ws.onMessage(function (response) {
+
+            if (!response || !response.data)
+                return console.warn('WS: Empty data');
+
+            var json = {};
+            try { json = JSON.parse(response.data); }
+            catch{ return console.warn('WS: Can not desiarilize the response', response.data); }
+
+            if (!json.cmd)
+                return console.warn('WS: Unknown command', json);
+
+            _onCommand(json);
+        });
+
+        service.send = function (json) {
+
+            for (var key in json) {
+
+                var value = json[key];
+                if (typeof value === 'boolean')
+                    json[key] = +value;
+            }
+
+            _ws.send(JSON.stringify(json));
+            $rootScope.$emit(`ws:send`, json);
+        };
+
+        service.ctrl = {};
+        service.ctrl.change = function (json) {
+
+            json.cmd = 'ctrl';
+            service.send(json);
+        };
+
+        service.wifi = {};
+        service.wifi.scan = function () {
+            service.send({ cmd: 'state', wifi: 'scan' });
         };
 
         return service;
@@ -538,12 +594,7 @@ angular.module('app', ['ngRoute',
     angular.module('app.controllers')
         .controller('settingsHardwareSettingsController', controller);
 
-    controller.$inject = ['$rootScope', '$scope', '$api'];
-
-    function controller($rootScope, $scope, $api) {
-
-        $scope.$api = $api;
-    };
+    function controller() { };
 
 })();
 (function () {
@@ -553,12 +604,7 @@ angular.module('app', ['ngRoute',
     angular.module('app.controllers')
         .controller('settingsMqttSettingsController', controller);
 
-    controller.$inject = ['$rootScope', '$scope', '$api'];
-
-    function controller($rootScope, $scope, $api) {
-
-        $scope.$api = $api;
-    };
+    function controller() { };
 
 })();
 (function () {
@@ -568,12 +614,7 @@ angular.module('app', ['ngRoute',
     angular.module('app.controllers')
         .controller('settingsNtpTimeSettingsController', controller);
 
-    controller.$inject = ['$rootScope', '$scope', '$api'];
-
-    function controller($rootScope, $scope, $api) {
-
-        $scope.$api = $api;
-    };
+    function controller() { };
 
 })();
 (function () {
@@ -583,11 +624,15 @@ angular.module('app', ['ngRoute',
     angular.module('app.controllers')
         .controller('settingsUpdateController', controller);
 
-    controller.$inject = ['$rootScope', '$scope', '$api'];
+    controller.$inject = ['$scope', '$api'];
 
-    function controller($rootScope, $scope, $api) {
+    function controller($scope, $api) {
 
-        $scope.$api = $api;
+        $scope.model = {};
+        $scope.update = function () {
+
+            $api.update($scope.files);
+        };
     };
 
 })();
@@ -598,11 +643,11 @@ angular.module('app', ['ngRoute',
     angular.module('app.controllers')
         .controller('settingsWirelessNetworkController', controller);
 
-    controller.$inject = ['$rootScope', '$scope', '$api'];
+    controller.$inject = ['$rootScope', '$scope', '$ws'];
 
-    function controller($rootScope, $scope, $api) {
+    function controller($rootScope, $scope, $ws) {
 
-        $scope.$api = $api;
+        $scope.$ws = $ws;
 
         $scope.autoDisableWifis = [
             new viewAutoDisableWifi('Always on', null),

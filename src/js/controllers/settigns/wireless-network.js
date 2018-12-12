@@ -5,11 +5,11 @@
     angular.module('app.controllers')
         .controller('settingsWirelessNetworkController', controller);
 
-    controller.$inject = ['$rootScope', '$scope', '$api'];
+    controller.$inject = ['$rootScope', '$scope', '$ws'];
 
-    function controller($rootScope, $scope, $api) {
+    function controller($rootScope, $scope, $ws) {
 
-        $scope.$api = $api;
+        $scope.$ws = $ws;
 
         $scope.autoDisableWifis = [
             new viewAutoDisableWifi('Always on', null),

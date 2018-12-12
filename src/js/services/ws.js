@@ -5,19 +5,58 @@
         .module('app.services')
         .factory('$ws', factory);
 
-    factory.$inject = ['$websocket'];
+    factory.$inject = ['$rootScope', '$websocket', '$config'];
 
-    function factory($websocket) {
+    function factory($rootScope, $websocket, $config) {
 
         var service = {};
 
-        service.createInstance = function () {
+        var _ws = $websocket(`ws://${$config.getRemoteHost()}/ws`);
+        var _onCommand = function (json) {
 
-            var hostname = window.location.hostname;
-            if (window.location.hostname === 'localhost' && window.location.port === '3000')
-                hostname = '192.168.31.50';
+            console.log(json);
+            $rootScope.$emit(`ws:event`, json);
+            $rootScope.$emit(`ws:event:${json.cmd}`, json);
+        };
 
-            return $websocket(`ws://${hostname}/ws`);
+        _ws.onMessage(function (response) {
+
+            if (!response || !response.data)
+                return console.warn('WS: Empty data');
+
+            var json = {};
+            try { json = JSON.parse(response.data); }
+            catch{ return console.warn('WS: Can not desiarilize the response', response.data); }
+
+            if (!json.cmd)
+                return console.warn('WS: Unknown command', json);
+
+            _onCommand(json);
+        });
+
+        service.send = function (json) {
+
+            for (var key in json) {
+
+                var value = json[key];
+                if (typeof value === 'boolean')
+                    json[key] = +value;
+            }
+
+            _ws.send(JSON.stringify(json));
+            $rootScope.$emit(`ws:send`, json);
+        };
+
+        service.ctrl = {};
+        service.ctrl.change = function (json) {
+
+            json.cmd = 'ctrl';
+            service.send(json);
+        };
+
+        service.wifi = {};
+        service.wifi.scan = function () {
+            service.send({ cmd: 'state', wifi: 'scan' });
         };
 
         return service;

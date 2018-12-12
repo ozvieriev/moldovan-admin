@@ -4,25 +4,19 @@
             <li class="header">MAIN NAVIGATION</li>
             <li data-ng-repeat="item in ::items" class="treeview menu-open">
                 <a data-ng-href="{{::item.href}}">
-                    <i class="fa fa-{{::item.icon}}"></i>
+                    <span class="glyphicon glyphicon-{{::item.icon}}"></span>
                     <span data-ng-bind="::item.title"></span>
                     <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
+                        <span class="glyphicon glyphicon-menu-down pull-right"></span>
                     </span>
                 </a>
                 <ul class="treeview-menu" style="display: block;" data-ng-if="item.items">
                     <li data-ng-repeat="item in ::item.items">
                         <a data-ng-href="{{::item.href}}">
-                            <i class="fa fa-{{::item.icon}}"></i>
+                            <span class="glyphicon glyphicon-{{::item.icon}}"></span>
                             <span data-ng-bind="::item.title"></span>
                         </a>
                     </li>
-                </ul>
-            </li>
-            <li class="treeview">
-                <ul class="treeview-menu">
-                    <li><a href="#"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
-                    <li><a href="#"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
                 </ul>
             </li>
         </ul>

@@ -5,58 +5,23 @@
         .module('app.services')
         .factory('$api', factory);
 
-    factory.$inject = ['$rootScope', '$ws'];
+    factory.$inject = ['$http', '$config'];
 
-    function factory($rootScope, $ws) {
+    function factory($http, $config) {
 
         var service = {};
 
-        var ws = $ws.createInstance();
-        var _onCommand = function (json) {
+        service.update = function (files) {
 
-            console.log(json);
-            $rootScope.$emit(`ws:event`, json);
-            $rootScope.$emit(`ws:event:${json.cmd}`, json);
-        };
+            var formData = new FormData();
+            angular.forEach(files, function (file) {
+                formData.append('file', file);
+            });
 
-        ws.onMessage(function (response) {
-
-            if (!response || !response.data)
-                return console.warn('WS: Empty data');
-
-            var json = {};
-            try { json = JSON.parse(response.data); }
-            catch{ return console.warn('WS: Can not desiarilize the response', response.data); }
-
-            if (!json.cmd)
-                return console.warn('WS: Unknown command', json);
-
-            _onCommand(json);
-        });
-
-        service.send = function (json) {
-
-            for (var key in json) {
-
-                var value = json[key];
-                if (typeof value === 'boolean')
-                    json[key] = +value;
-            }
-
-            ws.send(JSON.stringify(json));
-            $rootScope.$emit(`ws:send`, json);
-        };
-
-        service.ctrl = {};
-        service.ctrl.change = function (json) {
-
-            json.cmd = 'ctrl';
-            service.send(json);
-        };
-
-        service.wifi = {};
-        service.wifi.scan = function () {
-            service.send({ cmd: 'state', wifi: 'scan' });
+            return $http.post(`http://${$config.getRemoteHost()}/update/`, formData, {
+                transformRequest: angular.identity,
+                headers: { 'Content-Type': undefined }
+            });
         };
 
         return service;

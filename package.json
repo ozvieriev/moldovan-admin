@@ -13,7 +13,7 @@
     "gulp-modify-file": "1.0.1",
     "path": "0.12.7",
     "fs": "0.0.1-security",
-    "font-awesome": "4.7.0",
+    "glyphicons-css": "1.1.0",
     "mkdir-recursive": "0.4.0",
     "angular": "1.7.5",
     "angular-route": "1.7.5",
