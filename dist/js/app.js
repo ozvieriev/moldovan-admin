@@ -70,6 +70,33 @@ angular.module('app', ['ngRoute',
 
     angular
         .module('app.directives')
+        .directive('ngBalloon', directive);
+
+    directive.$inject = ['$parse'];
+
+    function directive($parse) {
+
+        return {
+            link: link,
+            restrict: 'A'
+        };
+
+        function link($scope, element, attrs) {
+
+            element
+                .attr('data-balloon-length', 'large')
+                .attr('data-balloon-pos', 'right')
+                .attr('data-balloon', attrs.ngBalloon)
+                .html('<i class="glyphicon glyphicon-info-sign"></i>');
+        }
+    }
+
+})();
+(function () {
+    'use strict';
+
+    angular
+        .module('app.directives')
         .directive('ngDebug', directive);
 
     directive.$inject = ['$rootScope', '$ws'];
@@ -278,7 +305,7 @@ angular.module('app', ['ngRoute',
             new viewSidebar('control', 'Control', '#!control')
                 .setIcon('wrench'),
             new viewSidebar('settings', 'Settings')
-                .setIcon('cogs')
+                .setIcon('cog')
                 .addItems([
                     new viewSidebar('wireless-network', 'Wireless Network', '#!settings/wireless-network')
                         .setIcon('signal'),

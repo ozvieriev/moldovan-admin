@@ -57,7 +57,7 @@
             new viewSidebar('control', 'Control', '#!control')
                 .setIcon('wrench'),
             new viewSidebar('settings', 'Settings')
-                .setIcon('cogs')
+                .setIcon('cog')
                 .addItems([
                     new viewSidebar('wireless-network', 'Wireless Network', '#!settings/wireless-network')
                         .setIcon('signal'),
