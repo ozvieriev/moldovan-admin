@@ -675,6 +675,7 @@ angular.module('app', ['ngRoute',
     function controller($rootScope, $scope, $ws) {
 
         $scope.$ws = $ws;
+        $scope.template = null;
 
         $scope.autoDisableWifis = [
             new viewAutoDisableWifi('Always on', null),
@@ -710,6 +711,12 @@ angular.module('app', ['ngRoute',
                 autoDisableWifi: $scope.autoDisableWifis[0]
             }
         };
+
+        //
+        $scope.$watch('model.wifiMode', function (value) {
+
+            $scope.template = 'pages/settings/wireless-network/' + value + '.html';
+        });
         $scope.$watch('model.client.network', function (value) {
 
             $scope.model.client.bssid = (value || {}).bssid || null;
