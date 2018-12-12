@@ -15,17 +15,17 @@ angular.module('app', ['ngRoute',
     .config(function ($routeProvider) {
 
         var _when = function (href, controller) {
-            
+
             $routeProvider.
-                when(`/${href}`, {
-                    templateUrl: `pages/${href}.html`,
-                    controller: `${controller}Controller`
+                when('/' + href, {
+                    templateUrl: ['pages/', href, '.html'].join(''),
+                    controller: [controller, 'Controller'].join('')
                 });
         };
 
         $routeProvider.
             when('/control', {
-                templateUrl: `pages/control.html`,
+                templateUrl: 'pages/control.html',
                 controller: 'controlController'
             }).
             otherwise({ redirectTo: '/control' });
@@ -92,8 +92,8 @@ angular.module('app', ['ngRoute',
 
                 var dateTime = new Date();
 
-                var dateTimeFormat = `${dateTime.getHours()}:${dateTime.getMinutes()}:${dateTime.getSeconds()}`;
-                var line = `${dateTimeFormat} - ${log}\n`;
+                var dateTimeFormat = [dateTime.getHours(), dateTime.getMinutes(), dateTime.getSeconds()].join(':');
+                var line = [dateTimeFormat, log].join(' - ') + '\n'
 
                 scope.model.log = line + scope.model.log;
             };
@@ -101,14 +101,14 @@ angular.module('app', ['ngRoute',
             scope.send = function () {
 
                 try { $ws.send(JSON.parse(scope.model.message)); }
-                catch (error) { _log(`error - ${error}`); }
+                catch (error) { _log('error - ' + error); }
             };
 
             $rootScope.$on('ws:send', function (event, json) {
-                _log(`ws:send - ${JSON.stringify(json)}`);
+                _log('ws:send - ' + JSON.stringify(json));
             });
             $rootScope.$on('ws:event', function (event, json) {
-                _log(`ws:event - ${JSON.stringify(json)}`);
+                _log('ws:event - ' + JSON.stringify(json));
             });
 
             var $textarea = element.find('textarea');
@@ -415,8 +415,8 @@ angular.module('app', ['ngRoute',
             angular.forEach(files, function (file) {
                 formData.append('file', file);
             });
-            
-            return $http.post(`http://${$config.getRemoteHost()}/update/`, formData, {
+
+            return $http.post('http://' + $config.getRemoteHost() + '/update/', formData, {
                 transformRequest: angular.identity,
                 headers: { 'Content-Type': undefined }
             });
@@ -536,12 +536,12 @@ angular.module('app', ['ngRoute',
 
         var service = {};
 
-        var _ws = $websocket(`ws://${$config.getRemoteHost()}/ws`);
+        var _ws = $websocket('ws://' + $config.getRemoteHost() + '/ws');
         var _onCommand = function (json) {
 
             console.log(json);
-            $rootScope.$emit(`ws:event`, json);
-            $rootScope.$emit(`ws:event:${json.cmd}`, json);
+            $rootScope.$emit('ws:event', json);
+            $rootScope.$emit('ws:event:' + json.cmd, json);
         };
 
         _ws.onMessage(function (response) {
@@ -551,7 +551,7 @@ angular.module('app', ['ngRoute',
 
             var json = {};
             try { json = JSON.parse(response.data); }
-            catch{ return console.warn('WS: Can not desiarilize the response', response.data); }
+            catch (error) { return console.warn('WS: Can not desiarilize the response', response.data); }
 
             if (!json.cmd)
                 return console.warn('WS: Unknown command', json);
@@ -569,7 +569,7 @@ angular.module('app', ['ngRoute',
             }
 
             _ws.send(JSON.stringify(json));
-            $rootScope.$emit(`ws:send`, json);
+            $rootScope.$emit('ws:send', json);
         };
 
         service.ctrl = {};
@@ -693,7 +693,7 @@ angular.module('app', ['ngRoute',
         this.bssid = json.bssid;
         this.rssi = json.rssi;
 
-        this.name = `BSSID: ${this.bssid}, RSSI: ${this.rssi}, Network: ${this.ssid}`;
+        this.name = 'BSSID: ' + this.bssid + ', RSSI: ' + this.rssi + ', Network: ' + this.ssid;
     };
 
 

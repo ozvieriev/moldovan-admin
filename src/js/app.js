@@ -15,17 +15,17 @@ angular.module('app', ['ngRoute',
     .config(function ($routeProvider) {
 
         var _when = function (href, controller) {
-            
+
             $routeProvider.
-                when(`/${href}`, {
-                    templateUrl: `pages/${href}.html`,
-                    controller: `${controller}Controller`
+                when('/' + href, {
+                    templateUrl: ['pages/', href, '.html'].join(''),
+                    controller: [controller, 'Controller'].join('')
                 });
         };
 
         $routeProvider.
             when('/control', {
-                templateUrl: `pages/control.html`,
+                templateUrl: 'pages/control.html',
                 controller: 'controlController'
             }).
             otherwise({ redirectTo: '/control' });

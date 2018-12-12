@@ -11,12 +11,12 @@
 
         var service = {};
 
-        var _ws = $websocket(`ws://${$config.getRemoteHost()}/ws`);
+        var _ws = $websocket('ws://' + $config.getRemoteHost() + '/ws');
         var _onCommand = function (json) {
 
             console.log(json);
-            $rootScope.$emit(`ws:event`, json);
-            $rootScope.$emit(`ws:event:${json.cmd}`, json);
+            $rootScope.$emit('ws:event', json);
+            $rootScope.$emit('ws:event:' + json.cmd, json);
         };
 
         _ws.onMessage(function (response) {
@@ -26,7 +26,7 @@
 
             var json = {};
             try { json = JSON.parse(response.data); }
-            catch{ return console.warn('WS: Can not desiarilize the response', response.data); }
+            catch (error) { return console.warn('WS: Can not desiarilize the response', response.data); }
 
             if (!json.cmd)
                 return console.warn('WS: Unknown command', json);
@@ -44,7 +44,7 @@
             }
 
             _ws.send(JSON.stringify(json));
-            $rootScope.$emit(`ws:send`, json);
+            $rootScope.$emit('ws:send', json);
         };
 
         service.ctrl = {};

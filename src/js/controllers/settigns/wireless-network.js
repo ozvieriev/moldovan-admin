@@ -55,7 +55,7 @@
         this.bssid = json.bssid;
         this.rssi = json.rssi;
 
-        this.name = `BSSID: ${this.bssid}, RSSI: ${this.rssi}, Network: ${this.ssid}`;
+        this.name = 'BSSID: ' + this.bssid + ', RSSI: ' + this.rssi + ', Network: ' + this.ssid;
     };
 
 

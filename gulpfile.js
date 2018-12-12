@@ -73,7 +73,6 @@ gulp.task('js:app', () => {
 gulp.task('js:vendor', () => {
 
   return gulp.src([
-    //'node_modules/jquery/dist/jquery.min.js',
     'node_modules/angular/angular.min.js',
     'node_modules/angular-route/angular-route.min.js',
     'node_modules/angular-websocket/dist/angular-websocket.min.js'
@@ -90,8 +89,7 @@ gulp.task('js', gulp.series(gulp.parallel('js:app', 'js:vendor')));
 gulp.task('font:bootstrap', () => {
 
   return gulp.src([
-    'node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2',
-
+    'node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2'
   ])
     .pipe(gulp.dest('dist/css/fonts'))
 });

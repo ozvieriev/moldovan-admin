@@ -25,8 +25,8 @@
 
                 var dateTime = new Date();
 
-                var dateTimeFormat = `${dateTime.getHours()}:${dateTime.getMinutes()}:${dateTime.getSeconds()}`;
-                var line = `${dateTimeFormat} - ${log}\n`;
+                var dateTimeFormat = [dateTime.getHours(), dateTime.getMinutes(), dateTime.getSeconds()].join(':');
+                var line = [dateTimeFormat, log].join(' - ') + '\n'
 
                 scope.model.log = line + scope.model.log;
             };
@@ -34,14 +34,14 @@
             scope.send = function () {
 
                 try { $ws.send(JSON.parse(scope.model.message)); }
-                catch (error) { _log(`error - ${error}`); }
+                catch (error) { _log('error - ' + error); }
             };
 
             $rootScope.$on('ws:send', function (event, json) {
-                _log(`ws:send - ${JSON.stringify(json)}`);
+                _log('ws:send - ' + JSON.stringify(json));
             });
             $rootScope.$on('ws:event', function (event, json) {
-                _log(`ws:event - ${JSON.stringify(json)}`);
+                _log('ws:event - ' + JSON.stringify(json));
             });
 
             var $textarea = element.find('textarea');
