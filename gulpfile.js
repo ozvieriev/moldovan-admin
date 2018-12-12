@@ -2,6 +2,7 @@ const fs = require('fs');
 const gulp = require('gulp');
 const path = require('path');
 const gzip = require('gulp-gzip');
+const clean = require('gulp-clean');
 const concat = require('gulp-concat');
 const flatmap = require('gulp-flatmap');
 const htmlmin = require('gulp-htmlmin');
@@ -118,6 +119,12 @@ gulp.task('watch', gulp.series(gulp.parallel(
   'css:app:watch',
   'html:app:watch',
   'js:app:watch')));
+
+gulp.task('clean', function () {
+
+  return gulp.src(['dist', 'gzip', 'gziph'])
+    .pipe(clean());
+});
 
 gulp.task('serve', function () {
 
