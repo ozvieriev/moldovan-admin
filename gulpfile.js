@@ -38,7 +38,7 @@ gulp.task('html:app', () => {
     .pipe(gulp.dest('dist'))
 });
 gulp.task('html:app:watch', () => {
-  return gulp.watch('src/index.html', gulp.series('html:app'));
+  return gulp.watch('src/**/*.html', gulp.series('html:app'));
 });
 gulp.task('html', gulp.series('html:app'));
 
@@ -60,7 +60,7 @@ gulp.task('css:vendor', () => {
     .pipe(gulp.dest('dist/css'))
 });
 gulp.task('css:app:watch', () => {
-  return gulp.watch('src/css/app.css', gulp.series('css:app'));
+  return gulp.watch('src/css/**/*.css', gulp.series('css:app'));
 });
 gulp.task('css', gulp.series(gulp.parallel('css:app', 'css:vendor')));
 
@@ -82,7 +82,7 @@ gulp.task('js:vendor', () => {
     .pipe(gulp.dest('dist/js'))
 });
 gulp.task('js:app:watch', () => {
-  return gulp.watch('src/js/app.js', gulp.series('js:app'));
+  return gulp.watch('src/js/**/*.js', gulp.series('js:app'));
 });
 gulp.task('js', gulp.series(gulp.parallel('js:app', 'js:vendor')));
 
@@ -115,7 +115,7 @@ gulp.task('serve', function () {
   browserSync.init({ server: { baseDir: "./dist" } });
 
   gulp
-    .watch(['dist/index.html', 'dist/**/*.css', 'dist/*.js'])
+    .watch(['dist/index.html', 'dist/**/*.css', 'dist/**/*.js'])
     .on("change", browserSync.reload);
 });
 

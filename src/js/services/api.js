@@ -17,7 +17,7 @@
             angular.forEach(files, function (file) {
                 formData.append('file', file);
             });
-
+            
             return $http.post(`http://${$config.getRemoteHost()}/update/`, formData, {
                 transformRequest: angular.identity,
                 headers: { 'Content-Type': undefined }

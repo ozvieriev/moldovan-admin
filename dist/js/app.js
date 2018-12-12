@@ -15,7 +15,7 @@ angular.module('app', ['ngRoute',
     .config(function ($routeProvider) {
 
         var _when = function (href, controller) {
-
+            
             $routeProvider.
                 when(`/${href}`, {
                     templateUrl: `pages/${href}.html`,
@@ -415,7 +415,7 @@ angular.module('app', ['ngRoute',
             angular.forEach(files, function (file) {
                 formData.append('file', file);
             });
-
+            
             return $http.post(`http://${$config.getRemoteHost()}/update/`, formData, {
                 transformRequest: angular.identity,
                 headers: { 'Content-Type': undefined }

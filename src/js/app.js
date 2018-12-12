@@ -15,7 +15,7 @@ angular.module('app', ['ngRoute',
     .config(function ($routeProvider) {
 
         var _when = function (href, controller) {
-
+            
             $routeProvider.
                 when(`/${href}`, {
                     templateUrl: `pages/${href}.html`,
