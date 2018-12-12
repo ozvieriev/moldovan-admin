@@ -6,4 +6,84 @@
 <script type="text/ng-template" id="pages/settings/mqtt-settings.html">mqtt-settings.html</script>
 <script type="text/ng-template" id="pages/settings/ntp-time-settings.html">ntp-time-settings.html</script>
 <script type="text/ng-template" id="pages/settings/update.html"><section class="content-header"><h1>Update</h1></section><section class="content"><div class="row"><div class="col-md-4"><div class="box box-info"><div class="box-body"><div class="form-group"><label>File</label><div><span class="btn btn-flat btn-info btn-xs btn-file">Browse <input data-ng-file-input="files" type="file"></span></div></div></div><div class="box-footer with-border"><button class="btn btn-flat btn-info btn-xs box-tool" data-ng-click="update()" type="button">Update</button></div></div></div></div></section></script>
-<script type="text/ng-template" id="pages/settings/wireless-network.html"><section class="content-header"><h1>Wi-Fi Settings</h1></section><section class="content"><div class="row"><div class="col-md-4"><div class="box box-info"><div class="box-header with-border"><h3 class="box-title"></h3><button class="box-tool btn btn-flat btn-xs btn-info" type="button" data-ng-click="$ws.wifi.scan()">Scan</button> <button class="box-tool btn btn-flat btn-xs btn-info" type="button"><span class="glyphicon glyphicon-floppy-disk"></span> Save</button> <button class="box-tool btn btn-flat btn-xs btn-danger" type="button">Cancel</button></div><div class="nav-tabs-custom"><ul class="nav nav-tabs"><li data-ng-class="{active:model.wifiMode==='access-point'}" data-ng-click="model.wifiMode='access-point'" style="cursor: pointer"><a data-toggle="tab">Access Point</a></li><li data-ng-class="{active:model.wifiMode==='client'}" data-ng-click="model.wifiMode='client'" style="cursor: pointer"><a data-toggle="tab">Client</a></li></ul></div><div class="box-body"><div data-ng-switch="model.wifiMode"><div class="row"><div class="col-md-6"><div class="form-group"><label>SSID</label> <input data-ng-model="model.ssid" type="text" class="form-control input-sm"></div></div><div class="col-md-6"><div class="form-group"><label>Password</label> <input data-ng-model="model.password" type="password" class="form-control input-sm"></div></div></div><div ng-switch-when="access-point"><div class="form-group"><label>Hide Network Name</label><div><label class="switch"><input data-ng-model="model.isHideNetworkName" type="checkbox"> <span class="round slider"></span></label></div></div><div class="row"><div class="col-md-6"><div class="form-group"><label>IP Address</label> <input data-ng-model="model.ipAddress" type="text" class="form-control input-sm"></div></div><div class="col-md-6"><div class="form-group"><label>Subnet Mask</label> <input data-ng-model="model.subnetMask" type="text" class="form-control input-sm"></div></div></div></div><div ng-switch-when="client"><div class="row"><div class="col-md-6"><div class="form-group"><label>BSSID</label> <input data-ng-model="model.bssid" type="text" class="form-control input-sm"></div></div><div class="col-md-6"><div class="form-group"><label>Use DHCP</label><div><label class="switch"><input data-ng-model="model.isUseDHCP" type="checkbox"> <span class="round slider"></span></label></div></div></div></div></div><div class="row"><div class="col-md-6"><div class="form-group"><label>Auto Disable Wifi</label> <select class="form-control input-sm" data-ng-model="model.autoDisableWifi" data-ng-options="autoDisableWifi.name for autoDisableWifi in ::autoDisableWifis"></select></div></div></div></div></div></div></div></div></section></script>
+<script type="text/ng-template" id="pages/settings/wireless-network.html"><section class="content-header"><h1>Wi-Fi Settings</h1></section><section class="content"><div class="row"><div class="col-md-4"><div class="box box-info"><div class="box-header with-border"><h3 class="box-title"></h3><button class="box-tool btn btn-flat btn-xs btn-info" type="button"><span class="glyphicon glyphicon-floppy-disk"></span> Save</button> <button class="box-tool btn btn-flat btn-xs btn-danger" type="button">Cancel</button></div><div class="box-body"><div class="form-group"><label>Wi-Fi Mode</label><div><label class="radio-inline"><input data-ng-model="model.wifiMode" name="wifiMode-radio" type="radio" value="access-point"> Access Point</label> <label class="radio-inline"><input data-ng-model=" model.wifiMode" name="wifiMode-radio" type="radio" value="client"> Client</label></div></div><div data-ng-include="'wifiMode-' + model.wifiMode"></div></div></div></div></div></section><script id="wifiMode-access-point" type="text/ng-template"><div class="form-group">
+        <label>SSID</label>
+        <input type="text" class="form-control input-sm" data-ng-model="model.accessPoint.ssid" />
+    </div>
+    <div class="form-group">
+        <label>Password</label>
+        <input class="form-control input-sm" type="password" data-ng-model="model.accessPoint.password">
+    </div>
+    <div class="form-group">
+        <label>Hide Network Name</label>
+        <div>
+            <label class="switch">
+                <input type="checkbox" data-ng-model="model.accessPoint.isHideNetworkName">
+                <span class="slider round"></span>
+            </label>
+        </div>
+    </div>
+    <div class="form-group">
+            <label>IP Address</label>
+            <input class="form-control input-sm" type="text" data-ng-model="model.accessPoint.ipAddress">
+        </div>
+        <div class="form-group">
+            <label>Subnet Mask</label>
+            <input class="form-control input-sm" type="text" data-ng-model="model.accessPoint.subnetMask">
+    </div>
+    <div class="form-group">
+        <label>Auto Disable Wifi</label>
+        <select class="form-control input-sm" data-ng-model="model.accessPoint.autoDisableWifi"
+            data-ng-options="autoDisableWifi.name for autoDisableWifi in ::autoDisableWifis">
+        </select>
+    </div></script><script id="wifiMode-client" type="text/ng-template"><div class="form-group">
+        <label>SSID</label>
+        <div class="input-group input-group-sm">
+            <input type="text" class="form-control" data-ng-model="model.client.ssid" data-ng-hide="networks"/>
+            <select class="form-control" data-ng-show="networks" data-ng-model="model.client.network" data-ng-options="network.name for network in networks"></select>
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-info" data-ng-click="$ws.wifi.scan()">Scan</button>
+            </span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>BSSID</label>
+        <input class="form-control input-sm" type="text" data-ng-model="model.client.bssid">
+    </div>
+    <div class="form-group">
+        <label>Password</label>
+        <input class="form-control input-sm" type="password" data-ng-model="model.client.password">
+    </div>
+    <div class="form-group">
+        <label>Use DHCP</label>
+        <div>
+            <label class="switch">
+                <input type="checkbox" data-ng-model="model.client.isUseDHCP">
+                <span class="slider round"></span>
+            </label>
+        </div>
+    </div>
+    <div data-ng-hide="model.client.isUseDHCP">
+        <div class="form-group">
+            <label>IP Address</label>
+            <input class="form-control input-sm" type="text" data-ng-model="model.client.ipAddress">
+        </div>
+        <div class="form-group">
+            <label>Subnet Mask</label>
+            <input class="form-control input-sm" type="text" data-ng-model="model.client.subnetMask">
+        </div>
+        <div class="form-group">
+            <label>DNS Server</label>
+            <input class="form-control input-sm" type="text" data-ng-model="model.client.dnsServer">
+        </div>
+        <div class="form-group">
+            <label>Gateway</label>
+            <input class="form-control input-sm" type="text" data-ng-model="model.client.gateway">
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Auto Disable Wifi</label>
+        <select class="form-control input-sm" data-ng-model="model.client.autoDisableWifi"
+            data-ng-options="autoDisableWifi.name for autoDisableWifi in ::autoDisableWifis">
+        </select>
+    </div></script></script>

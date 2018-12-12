@@ -20,18 +20,42 @@
             new viewAutoDisableWifi('15 min', 15),
             new viewAutoDisableWifi('30 min', 30),
         ];
-        $scope.wifis = null;
+        $scope.networks = null;
 
         $scope.model = {
-            wifiMode: 'access-point',
-            ssid: 'SMC',
-            bssid: 'aa:bb:Cc:dd:ee',
-            isHideNetworkName: false,
-            isUseDHCP: true,
-            autoDisableWifi: $scope.autoDisableWifis[0]
+            wifiMode: 'client',
+            accessPoint: {
+                ssid: null,
+                password: null,
+                isHideNetworkName: false,
+                ipAddress: null,
+                subnetMask: null,
+                autoDisableWifi: $scope.autoDisableWifis[0]
+            },
+            client: {
+                network: null,
+                ssid: null,
+                bssid: null,
+                password: null,
+                isUseDHCP: true,
+                ipAddress: null,
+                subnetMask: null,
+                dnsServer: null,
+                gateway: null,
+                autoDisableWifi: $scope.autoDisableWifis[0]
+            }
         };
+        $scope.$watch('model.client.network', function (value) {
+
+            $scope.model.client.bssid = (value || {}).bssid || null;
+        });
 
         $rootScope.$on('ws:event:wifi-list', function (event, json) {
+
+            if (json['list'])
+                json.networks = json['list'];
+
+            /*************************************/
 
             if (typeof json.networks === 'undefined')
                 return;
@@ -41,6 +65,9 @@
                 this.push(new viewNetwork(item));
             }, networks);
             $scope.networks = networks;
+
+            if ($scope.model.wifiMode === 'client')
+                $scope.model.client.network = networks.length ? networks[0] : null;
         });
     };
 
