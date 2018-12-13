@@ -9,6 +9,8 @@
 
     function controller($rootScope, $scope, $state, $ws) {
 
+        $scope.$ws = $ws;
+
         $ws.config.get();
         $rootScope.$on('ws:event:cfg', function (event, json) {
 

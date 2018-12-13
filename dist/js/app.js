@@ -66,6 +66,8 @@ angular.module('app', ['ui.router',
 
     function controller($rootScope, $scope, $state, $ws) {
 
+        $scope.$ws = $ws;
+
         $ws.config.get();
         $rootScope.$on('ws:event:cfg', function (event, json) {
 
@@ -444,7 +446,7 @@ angular.module('app', ['ui.router',
 
             var hostname = window.location.hostname;
             if (window.location.hostname === 'localhost' && window.location.port === '3000')
-                hostname = '192.168.31.239';
+                hostname = '192.168.31.50'; //.239
 
             return hostname;
         };
