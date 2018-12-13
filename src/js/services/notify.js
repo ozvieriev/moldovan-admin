@@ -5,39 +5,37 @@
         .module('app.services')
         .factory('$notify', factory);
 
-    factory.$inject = ['$rootScope'];
+    factory.$inject = ['$timeout'];
 
-    function factory($rootScope) {
+    function factory($timeout) {
 
         var service = {};
 
-        var _notify = function (type, options) {
+        var _notify = function (title, options) {
 
-            options.type = type;
-            options.timeout = 2 * 1000;
+            if (!window.Notification)
+                return console.log('Web Notification not supported');
 
-            $rootScope.$emit('notify', options);
+            window.Notification.requestPermission(function (permission) {
+
+                if (permission !== 'granted')
+                    return;
+
+                options = options || {};
+                options.body = options.body || '';
+
+                var notification = new window.Notification(title, options);
+                $timeout(notification.close, 3 * 1000);
+            });
         };
 
-        service.info = function (content) {
-
-            _notify('info', { title: 'Information', content: content });
-        };
-        service.warning = function (content) {
-
-            _notify('warning', { title: 'Warning', content: content });
-        };
-        service.success = function (content) {
-
-            _notify('success', { title: 'Success', content: content });
-        };
-        service.error = function (content) {
-
-            _notify('error', { title: 'Error', content: content });
-        };
+        service.info = _notify;
+        service.warning = _notify;
+        service.success = _notify;
+        service.error = _notify;
         service.serverError = function () {
 
-            _notify('error', { title: 'Error', content: 'An error has occured. Please try again or contact us.' });
+            this.error('An error has occured. Please try again or contact us.');
         };
 
         return service;

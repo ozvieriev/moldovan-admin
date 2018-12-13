@@ -11,6 +11,7 @@ angular.module('app', ['ngRoute',
         angular.forEach(tempaltes, function (template) {
             $templateCache.put(template.id, template.innerHTML);
         });
+
     })
     .config(function ($routeProvider) {
 
@@ -28,7 +29,11 @@ angular.module('app', ['ngRoute',
                 templateUrl: 'pages/control.html',
                 controller: 'controlController'
             }).
-            otherwise({ redirectTo: '/control' });
+            when('/', {
+                templateUrl: 'pages/index.html',
+                controller: 'indexController'
+            }).
+            otherwise({ redirectTo: '/' });
 
         _when('settings/hardware-settings', 'settingsHardwareSettings');
         _when('settings/mqtt-settings', 'settingsMqttSettings');

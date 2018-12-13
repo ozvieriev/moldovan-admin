@@ -11,6 +11,7 @@ angular.module('app', ['ngRoute',
         angular.forEach(tempaltes, function (template) {
             $templateCache.put(template.id, template.innerHTML);
         });
+
     })
     .config(function ($routeProvider) {
 
@@ -28,7 +29,11 @@ angular.module('app', ['ngRoute',
                 templateUrl: 'pages/control.html',
                 controller: 'controlController'
             }).
-            otherwise({ redirectTo: '/control' });
+            when('/', {
+                templateUrl: 'pages/index.html',
+                controller: 'indexController'
+            }).
+            otherwise({ redirectTo: '/' });
 
         _when('settings/hardware-settings', 'settingsHardwareSettings');
         _when('settings/mqtt-settings', 'settingsMqttSettings');
@@ -65,6 +70,96 @@ angular.module('app', ['ngRoute',
     };
 
 })();
+(function () {
+
+    'use strict';
+
+    angular.module('app.controllers')
+        .controller('indexController', controller);
+
+    controller.$inject = [];
+
+    function controller() {
+
+    };
+
+})();
+(function () {
+
+    angular.module('http-notify-interceptor', [])
+        .config(['$httpProvider', function ($httpProvider) {
+
+            $httpProvider.interceptors.push(['$q', '$notify', function ($q, $notify) {
+
+                var interceptor = {};
+
+                interceptor.request = function (config) {
+
+                    config.headers = config.headers || {};
+
+                    return config;
+                };
+                interceptor.response = function (response) {
+
+                    var config = response.config || {};
+
+                    if (config.notify) {
+
+                        if (config.notify.success)
+                            $notify.success(config.notify.success);
+                    }
+
+                    return response;
+                };
+                interceptor.responseError = function (rejection) {
+
+                    var config = rejection.config || {};
+
+                    if (config.notify) {
+
+                        if (config.notify.error === true)
+                            $notify.serverError();
+                        else
+                            $notify.error(config.notify.error);
+                    }
+                    return $q.reject(rejection);
+                };
+
+                return interceptor;
+            }]);
+        }]);
+})();
+
+(function () {
+
+    angular.module('http-interceptor', [])
+        .config(['$httpProvider', function ($httpProvider) {
+
+            $httpProvider.interceptors.push(['$q', function ($q) {
+
+                var interceptor = {};
+
+                interceptor.request = function (config) {
+
+                    config.headers = config.headers || {};
+
+                    return config;
+                };
+                interceptor.response = function (response) {
+                    
+                    var config = response.config || {};
+
+                    if (config.asJson === true)
+                        return response.data;
+
+                    return response;
+                };
+
+                return interceptor;
+            }]);
+        }]);
+})();
+
 (function () {
     'use strict';
 
@@ -176,77 +271,6 @@ angular.module('app', ['ngRoute',
 
 })();
 (function () {
-
-    'use strict';
-    angular
-        .module('app.directives')
-        .directive('ngNotifybar', directive);
-
-    directive.$inject = ['$rootScope', '$interval'];
-
-    function directive($rootScope, $interval) {
-
-        var directive = {
-            link: link,
-            template:
-                ['<div class="angular-notify angular-notify-{{::notification.type}} angular-notify-enter" data-ng-repeat="notification in notifications">',
-                    '<p class="title" data-ng-bind="::notification.title"></p>',
-                    '<p class="notify-content" data-ng-bind="::notification.content"></p>',
-                    '<div/>'
-                ].join(''),
-            scope: {},
-            restrict: 'A'
-        };
-        return directive;
-
-        function link($scope, element, attr) {
-
-            element.css('position', 'fixed');
-            $scope.notifications = [];
-
-            var interval = null;
-
-            $rootScope.$on('notify', function (event, json) {
-
-                var notification = new viewNotification(json);
-                $scope.notifications.push(notification);
-
-                if (interval)
-                    return;
-
-                interval = $interval(function () {
-
-                    var now = new Date();
-                    for (var index = 0; index < $scope.notifications.length; index++) {
-
-                        if ($scope.notifications[index].timeoutTime < now)
-                            $scope.notifications.splice(index--, 1);
-                    }
-
-                    if (!$scope.notifications.length) {
-
-                        $interval.cancel(interval);
-                        interval = null;
-                    }
-                }, 1000);
-            });
-        }
-    }
-
-    var viewNotification = function (json) {
-
-        this.type = json.type;
-        this.title = json.title;
-        this.content = json.content;
-
-        var timeoutTime = new Date();
-        timeoutTime.setMilliseconds(timeoutTime.getMilliseconds() + json.timeout);
-
-        this.timeoutTime = timeoutTime;
-    };
-
-})();
-(function () {
     'use strict';
 
     angular
@@ -348,82 +372,6 @@ angular.module('app', ['ngRoute',
 
 })();
 (function () {
-
-    angular.module('http-notify-interceptor', [])
-        .config(['$httpProvider', function ($httpProvider) {
-
-            $httpProvider.interceptors.push(['$q', '$notify', function ($q, $notify) {
-
-                var interceptor = {};
-
-                interceptor.request = function (config) {
-
-                    config.headers = config.headers || {};
-
-                    return config;
-                };
-                interceptor.response = function (response) {
-
-                    var config = response.config || {};
-
-                    if (config.notify) {
-
-                        if (config.notify.success)
-                            $notify.success(config.notify.success);
-                    }
-
-                    return response;
-                };
-                interceptor.responseError = function (rejection) {
-
-                    var config = rejection.config || {};
-
-                    if (config.notify) {
-
-                        if (config.notify.error === true)
-                            $notify.serverError();
-                        else
-                            $notify.error(config.notify.error);
-                    }
-                    return $q.reject(rejection);
-                };
-
-                return interceptor;
-            }]);
-        }]);
-})();
-
-(function () {
-
-    angular.module('http-interceptor', [])
-        .config(['$httpProvider', function ($httpProvider) {
-
-            $httpProvider.interceptors.push(['$q', function ($q) {
-
-                var interceptor = {};
-
-                interceptor.request = function (config) {
-
-                    config.headers = config.headers || {};
-
-                    return config;
-                };
-                interceptor.response = function (response) {
-                    
-                    var config = response.config || {};
-
-                    if (config.asJson === true)
-                        return response.data;
-
-                    return response;
-                };
-
-                return interceptor;
-            }]);
-        }]);
-})();
-
-(function () {
     'use strict';
 
     angular
@@ -467,7 +415,7 @@ angular.module('app', ['ngRoute',
 
             var hostname = window.location.hostname;
             if (window.location.hostname === 'localhost' && window.location.port === '3000')
-                hostname = '192.168.31.50';
+                hostname = '192.168.31.239';
 
             return hostname;
         };
@@ -512,39 +460,37 @@ angular.module('app', ['ngRoute',
         .module('app.services')
         .factory('$notify', factory);
 
-    factory.$inject = ['$rootScope'];
+    factory.$inject = ['$timeout'];
 
-    function factory($rootScope) {
+    function factory($timeout) {
 
         var service = {};
 
-        var _notify = function (type, options) {
+        var _notify = function (title, options) {
 
-            options.type = type;
-            options.timeout = 2 * 1000;
+            if (!window.Notification)
+                return console.log('Web Notification not supported');
 
-            $rootScope.$emit('notify', options);
+            window.Notification.requestPermission(function (permission) {
+
+                if (permission !== 'granted')
+                    return;
+
+                options = options || {};
+                options.body = options.body || '';
+
+                var notification = new window.Notification(title, options);
+                $timeout(notification.close, 3 * 1000);
+            });
         };
 
-        service.info = function (content) {
-
-            _notify('info', { title: 'Information', content: content });
-        };
-        service.warning = function (content) {
-
-            _notify('warning', { title: 'Warning', content: content });
-        };
-        service.success = function (content) {
-
-            _notify('success', { title: 'Success', content: content });
-        };
-        service.error = function (content) {
-
-            _notify('error', { title: 'Error', content: content });
-        };
+        service.info = _notify;
+        service.warning = _notify;
+        service.success = _notify;
+        service.error = _notify;
         service.serverError = function () {
 
-            _notify('error', { title: 'Error', content: 'An error has occured. Please try again or contact us.' });
+            this.error('An error has occured. Please try again or contact us.');
         };
 
         return service;
@@ -609,6 +555,10 @@ angular.module('app', ['ngRoute',
         service.wifi = {};
         service.wifi.scan = function () {
             service.send({ cmd: 'state', wifi: 'scan' });
+        };
+
+        service.config = function() {
+            service.send({ cmd: 'getcfg' });
         };
 
         return service;

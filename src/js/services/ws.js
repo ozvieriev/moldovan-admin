@@ -59,6 +59,10 @@
             service.send({ cmd: 'state', wifi: 'scan' });
         };
 
+        service.config = function() {
+            service.send({ cmd: 'getcfg' });
+        };
+
         return service;
     };
 })();
