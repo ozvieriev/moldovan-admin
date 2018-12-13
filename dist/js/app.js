@@ -16,25 +16,13 @@ angular.module('app', ['ui.router',
 
         $transitions.onBefore({ to: '**' }, function (transitions) {
 
-            if (transitions.to().name !== 'index' && !$ws.isReady())
-                return transitions.router.stateService.target('index');
+            // if (transitions.to().name !== 'index' && !$ws.isReady())
+            //     return transitions.router.stateService.target('index');
         });
     })
     .config(function ($stateProvider, $urlRouterProvider) {
 
         $urlRouterProvider.otherwise('/');
-
-        $stateProvider
-            .state('index', {
-                url: '/',
-                templateUrl: 'pages/index.html',
-                controller: 'indexController'
-            })
-            .state('control', {
-                url: '/control',
-                templateUrl: 'pages/control.html',
-                controller: 'controlController'
-            })
 
         var _when = function (href, controller) {
 
@@ -45,7 +33,8 @@ angular.module('app', ['ui.router',
                     controller: [controller, 'Controller'].join('')
                 });
         };
-
+        _when('index', 'index');
+        _when('control', 'control');
         _when('settings/hardware-settings', 'settingsHardwareSettings');
         _when('settings/mqtt-settings', 'settingsMqttSettings');
         _when('settings/ntp-time-settings', 'settingsNtpTimeSettings');
