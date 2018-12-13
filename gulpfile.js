@@ -74,8 +74,9 @@ gulp.task('js:app', () => {
 gulp.task('js:vendor', () => {
 
   return gulp.src([
-    'node_modules/angular/angular.min.js',
-    'node_modules/angular-route/angular-route.min.js',
+    'node_modules/angular/angular.min.js',    
+    'node_modules/angular-ui-router/release/angular-ui-router.min.js',
+    //'node_modules/angular-route/angular-route.min.js',
     'node_modules/angular-websocket/dist/angular-websocket.min.js'
   ])
     .pipe(concat('vendor.min.js'))

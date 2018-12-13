@@ -5,10 +5,8 @@
     angular.module('app.controllers')
         .controller('indexController', controller);
 
-    controller.$inject = [];
+    controller.$inject = ['$scope'];
 
-    function controller() {
-
-    };
+    function controller($scope) { };
 
 })();

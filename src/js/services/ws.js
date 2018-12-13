@@ -11,13 +11,8 @@
 
         var service = {};
 
+        var _config = null;
         var _ws = $websocket('ws://' + $config.getRemoteHost() + '/ws');
-        var _onCommand = function (json) {
-
-            console.log(json);
-            $rootScope.$emit('ws:event', json);
-            $rootScope.$emit('ws:event:' + json.cmd, json);
-        };
 
         _ws.onMessage(function (response) {
 
@@ -31,9 +26,16 @@
             if (!json.cmd)
                 return console.warn('WS: Unknown command', json);
 
-            _onCommand(json);
+            console.log(json);
+
+            if (json.cmd === 'cfg')
+                _config = angular.copy(json);
+
+            $rootScope.$emit('ws:event', json);
+            $rootScope.$emit('ws:event:' + json.cmd, json);
         });
 
+        service.isReady = function () { return !!_config; };
         service.send = function (json) {
 
             for (var key in json) {
@@ -59,8 +61,13 @@
             service.send({ cmd: 'state', wifi: 'scan' });
         };
 
-        service.config = function() {
+        service.config = {};
+        service.config.get = function () {
             service.send({ cmd: 'getcfg' });
+        };
+        service.config.network = function () {
+
+            return _config.network || null;
         };
 
         return service;

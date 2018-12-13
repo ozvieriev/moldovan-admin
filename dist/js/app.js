@@ -3,37 +3,48 @@ angular.module('app.controllers', []);
 angular.module('app.directives', []);
 angular.module('app.filters', []);
 
-angular.module('app', ['ngRoute',
+angular.module('app', ['ui.router',
     'app.services', 'app.controllers', 'app.directives', 'app.filters'])
-    .run(function ($templateCache) {
+    .run(function ($trace, $transitions, $templateCache, $ws) {
+
+        $trace.enable('TRANSITION');
 
         var tempaltes = document.querySelectorAll('script[type="text/ng-template"]');
         angular.forEach(tempaltes, function (template) {
             $templateCache.put(template.id, template.innerHTML);
         });
 
+        $transitions.onBefore({ to: '**' }, function (transitions) {
+
+            if (transitions.to().name !== 'index' && !$ws.isReady())
+                return transitions.router.stateService.target('index');
+        });
     })
-    .config(function ($routeProvider) {
+    .config(function ($stateProvider, $urlRouterProvider) {
+
+        $urlRouterProvider.otherwise('/');
+
+        $stateProvider
+            .state('index', {
+                url: '/',
+                templateUrl: 'pages/index.html',
+                controller: 'indexController'
+            })
+            .state('control', {
+                url: '/control',
+                templateUrl: 'pages/control.html',
+                controller: 'controlController'
+            })
 
         var _when = function (href, controller) {
 
-            $routeProvider.
-                when('/' + href, {
+            $stateProvider.
+                state(href, {
+                    url: '/' + href,
                     templateUrl: ['pages/', href, '.html'].join(''),
                     controller: [controller, 'Controller'].join('')
                 });
         };
-
-        $routeProvider.
-            when('/control', {
-                templateUrl: 'pages/control.html',
-                controller: 'controlController'
-            }).
-            when('/', {
-                templateUrl: 'pages/index.html',
-                controller: 'indexController'
-            }).
-            otherwise({ redirectTo: '/' });
 
         _when('settings/hardware-settings', 'settingsHardwareSettings');
         _when('settings/mqtt-settings', 'settingsMqttSettings');
@@ -44,6 +55,26 @@ angular.module('app', ['ngRoute',
     });
 
 //https://github.com/modularcode/modular-admin-angularjs/blob/master/src/_main.js
+(function () {
+
+    'use strict';
+
+    angular.module('app.controllers')
+        .controller('appController', controller);
+
+    controller.$inject = ['$rootScope', '$scope', '$state', '$ws'];
+
+    function controller($rootScope, $scope, $state, $ws) {
+
+        $ws.config.get();
+        $rootScope.$on('ws:event:cfg', function (event, json) {
+
+            if ($state.$current.name === 'index')
+                $state.go('control');
+        });
+    };
+
+})();
 (function () {
 
     'use strict';
@@ -77,89 +108,11 @@ angular.module('app', ['ngRoute',
     angular.module('app.controllers')
         .controller('indexController', controller);
 
-    controller.$inject = [];
+    controller.$inject = ['$scope'];
 
-    function controller() {
-
-    };
+    function controller($scope) { };
 
 })();
-(function () {
-
-    angular.module('http-notify-interceptor', [])
-        .config(['$httpProvider', function ($httpProvider) {
-
-            $httpProvider.interceptors.push(['$q', '$notify', function ($q, $notify) {
-
-                var interceptor = {};
-
-                interceptor.request = function (config) {
-
-                    config.headers = config.headers || {};
-
-                    return config;
-                };
-                interceptor.response = function (response) {
-
-                    var config = response.config || {};
-
-                    if (config.notify) {
-
-                        if (config.notify.success)
-                            $notify.success(config.notify.success);
-                    }
-
-                    return response;
-                };
-                interceptor.responseError = function (rejection) {
-
-                    var config = rejection.config || {};
-
-                    if (config.notify) {
-
-                        if (config.notify.error === true)
-                            $notify.serverError();
-                        else
-                            $notify.error(config.notify.error);
-                    }
-                    return $q.reject(rejection);
-                };
-
-                return interceptor;
-            }]);
-        }]);
-})();
-
-(function () {
-
-    angular.module('http-interceptor', [])
-        .config(['$httpProvider', function ($httpProvider) {
-
-            $httpProvider.interceptors.push(['$q', function ($q) {
-
-                var interceptor = {};
-
-                interceptor.request = function (config) {
-
-                    config.headers = config.headers || {};
-
-                    return config;
-                };
-                interceptor.response = function (response) {
-                    
-                    var config = response.config || {};
-
-                    if (config.asJson === true)
-                        return response.data;
-
-                    return response;
-                };
-
-                return interceptor;
-            }]);
-        }]);
-})();
-
 (function () {
     'use strict';
 
@@ -326,20 +279,20 @@ angular.module('app', ['ngRoute',
     viewSidebarBuilder.build = function () {
 
         return [
-            new viewSidebar('control', 'Control', '#!control')
+            new viewSidebar('control', 'Control', 'control')
                 .setIcon('wrench'),
             new viewSidebar('settings', 'Settings')
                 .setIcon('cog')
                 .addItems([
-                    new viewSidebar('wireless-network', 'Wireless Network', '#!settings/wireless-network')
+                    new viewSidebar('wireless-network', 'Wireless Network', 'settings/wireless-network')
                         .setIcon('signal'),
-                    new viewSidebar('hardware-settings', 'Hardware Settings', '#!settings/hardware-settings')
+                    new viewSidebar('hardware-settings', 'Hardware Settings', 'settings/hardware-settings')
                         .setIcon('wrench'),
-                    new viewSidebar('mqtt-settings', 'MQTT Settings', '#!settings/mqtt-settings')
+                    new viewSidebar('mqtt-settings', 'MQTT Settings', 'settings/mqtt-settings')
                         .setIcon('cog'),
-                    new viewSidebar('ntp-time-settings', 'NTP (Time) Settings', '#!settings/ntp-time-settings')
+                    new viewSidebar('ntp-time-settings', 'NTP (Time) Settings', 'settings/ntp-time-settings')
                         .setIcon('cloud'),
-                    new viewSidebar('update', 'Update', '#!settings/update')
+                    new viewSidebar('update', 'Update', 'settings/update')
                         .setIcon('upload')
                 ])
         ];
@@ -371,6 +324,82 @@ angular.module('app', ['ngRoute',
     }
 
 })();
+(function () {
+
+    angular.module('http-notify-interceptor', [])
+        .config(['$httpProvider', function ($httpProvider) {
+
+            $httpProvider.interceptors.push(['$q', '$notify', function ($q, $notify) {
+
+                var interceptor = {};
+
+                interceptor.request = function (config) {
+
+                    config.headers = config.headers || {};
+
+                    return config;
+                };
+                interceptor.response = function (response) {
+
+                    var config = response.config || {};
+
+                    if (config.notify) {
+
+                        if (config.notify.success)
+                            $notify.success(config.notify.success);
+                    }
+
+                    return response;
+                };
+                interceptor.responseError = function (rejection) {
+
+                    var config = rejection.config || {};
+
+                    if (config.notify) {
+
+                        if (config.notify.error === true)
+                            $notify.serverError();
+                        else
+                            $notify.error(config.notify.error);
+                    }
+                    return $q.reject(rejection);
+                };
+
+                return interceptor;
+            }]);
+        }]);
+})();
+
+(function () {
+
+    angular.module('http-interceptor', [])
+        .config(['$httpProvider', function ($httpProvider) {
+
+            $httpProvider.interceptors.push(['$q', function ($q) {
+
+                var interceptor = {};
+
+                interceptor.request = function (config) {
+
+                    config.headers = config.headers || {};
+
+                    return config;
+                };
+                interceptor.response = function (response) {
+                    
+                    var config = response.config || {};
+
+                    if (config.asJson === true)
+                        return response.data;
+
+                    return response;
+                };
+
+                return interceptor;
+            }]);
+        }]);
+})();
+
 (function () {
     'use strict';
 
@@ -509,13 +538,8 @@ angular.module('app', ['ngRoute',
 
         var service = {};
 
+        var _config = null;
         var _ws = $websocket('ws://' + $config.getRemoteHost() + '/ws');
-        var _onCommand = function (json) {
-
-            console.log(json);
-            $rootScope.$emit('ws:event', json);
-            $rootScope.$emit('ws:event:' + json.cmd, json);
-        };
 
         _ws.onMessage(function (response) {
 
@@ -529,9 +553,16 @@ angular.module('app', ['ngRoute',
             if (!json.cmd)
                 return console.warn('WS: Unknown command', json);
 
-            _onCommand(json);
+            console.log(json);
+
+            if (json.cmd === 'cfg')
+                _config = angular.copy(json);
+
+            $rootScope.$emit('ws:event', json);
+            $rootScope.$emit('ws:event:' + json.cmd, json);
         });
 
+        service.isReady = function () { return !!_config; };
         service.send = function (json) {
 
             for (var key in json) {
@@ -557,8 +588,13 @@ angular.module('app', ['ngRoute',
             service.send({ cmd: 'state', wifi: 'scan' });
         };
 
-        service.config = function() {
+        service.config = {};
+        service.config.get = function () {
             service.send({ cmd: 'getcfg' });
+        };
+        service.config.network = function () {
+
+            return _config.network || null;
         };
 
         return service;
@@ -672,6 +708,13 @@ angular.module('app', ['ngRoute',
             $scope.model.client.bssid = (value || {}).bssid || null;
         });
 
+        $rootScope.$on('ws:event:cfg', function (event, json) {
+
+            var network = $ws.config.network();
+            if(!network) return;
+
+            
+        });
         $rootScope.$on('ws:event:wifi-list', function (event, json) {
 
             if (json['list'])

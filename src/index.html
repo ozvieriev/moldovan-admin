@@ -11,7 +11,7 @@
 </head>
 
 <body data-ng-app="app" class="skin-blue sidebar-mini" style="height: auto; min-height: 100%;">
-    <div class="wrapper" style="height: auto; min-height: 100%;">
+    <div class="wrapper" style="height: auto; min-height: 100%;" data-ng-controller="appController">
         <header class="main-header">
             <a href="#" class="logo">
                 <span class="logo-mini"><b>MA</b></span>
@@ -20,7 +20,7 @@
             <nav class="navbar navbar-static-top"></nav>
         </header>
         <div data-ng-sidebar></div>
-        <div class="content-wrapper" style="min-height: 1000px;" data-ng-cloak data-ng-view></div>
+        <div class="content-wrapper" style="min-height: 1000px;" data-ng-cloak data-ui-view></div>
         <div data-ng-debug></div>
         <footer class="main-footer"></footer>
         <div class="control-sidebar-bg"></div>

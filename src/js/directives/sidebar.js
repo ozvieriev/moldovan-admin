@@ -54,20 +54,20 @@
     viewSidebarBuilder.build = function () {
 
         return [
-            new viewSidebar('control', 'Control', '#!control')
+            new viewSidebar('control', 'Control', 'control')
                 .setIcon('wrench'),
             new viewSidebar('settings', 'Settings')
                 .setIcon('cog')
                 .addItems([
-                    new viewSidebar('wireless-network', 'Wireless Network', '#!settings/wireless-network')
+                    new viewSidebar('wireless-network', 'Wireless Network', 'settings/wireless-network')
                         .setIcon('signal'),
-                    new viewSidebar('hardware-settings', 'Hardware Settings', '#!settings/hardware-settings')
+                    new viewSidebar('hardware-settings', 'Hardware Settings', 'settings/hardware-settings')
                         .setIcon('wrench'),
-                    new viewSidebar('mqtt-settings', 'MQTT Settings', '#!settings/mqtt-settings')
+                    new viewSidebar('mqtt-settings', 'MQTT Settings', 'settings/mqtt-settings')
                         .setIcon('cog'),
-                    new viewSidebar('ntp-time-settings', 'NTP (Time) Settings', '#!settings/ntp-time-settings')
+                    new viewSidebar('ntp-time-settings', 'NTP (Time) Settings', 'settings/ntp-time-settings')
                         .setIcon('cloud'),
-                    new viewSidebar('update', 'Update', '#!settings/update')
+                    new viewSidebar('update', 'Update', 'settings/update')
                         .setIcon('upload')
                 ])
         ];

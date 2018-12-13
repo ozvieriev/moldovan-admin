@@ -57,6 +57,13 @@
             $scope.model.client.bssid = (value || {}).bssid || null;
         });
 
+        $rootScope.$on('ws:event:cfg', function (event, json) {
+
+            var network = $ws.config.network();
+            if(!network) return;
+
+            
+        });
         $rootScope.$on('ws:event:wifi-list', function (event, json) {
 
             if (json['list'])
