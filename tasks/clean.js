@@ -1,8 +1,7 @@
+const del = require('del');
 const gulp = require('gulp');
-const clean = require('gulp-clean');
 
 gulp.task('clean', function () {
 
-    return gulp.src(['dist', 'gzip', 'gziph'])
-        .pipe(clean());
+    return del(['dist', 'gzip', 'gziph']);
 });

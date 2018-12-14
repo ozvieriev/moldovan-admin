@@ -1,5 +1,9 @@
+const fn = require('gulp-fn');
+const del = require('del');
 const gulp = require('gulp');
+const path = require('path');
 const babel = require('gulp-babel');
+const minify = require('gulp-minify');
 const concat = require('gulp-concat');
 
 gulp.task('js:app', () => {
@@ -9,7 +13,20 @@ gulp.task('js:app', () => {
         .pipe(babel({
             presets: ['@babel/env']
         }))
+        .pipe(minify({
+            ext: {
+                src: '.js',
+                min: '.min.js'
+            },
+            mangle: false,
+            ignoreFiles: ['.min.js']
+        }))
         .pipe(gulp.dest('dist/js'))
+        .pipe(fn(function (file) {
+
+            if (path.basename(file.path) === 'app.js')
+                del(file.path);
+        }));
 });
 gulp.task('js:vendor', () => {
 
