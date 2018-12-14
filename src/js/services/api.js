@@ -1,13 +1,6 @@
-﻿(function () {
-    'use strict';
-
-    angular
-        .module('app.services')
-        .factory('$api', factory);
-
-    factory.$inject = ['$http', '$config'];
-
-    function factory($http, $config) {
+﻿angular
+    .module('app.services')
+    .factory('$api', ['$http', '$config', function factory($http, $config) {
 
         var service = {};
 
@@ -25,5 +18,4 @@
         };
 
         return service;
-    };
-})();
+    }]);

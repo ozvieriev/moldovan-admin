@@ -1,13 +1,6 @@
-(function () {
-    'use strict';
-
-    angular
-        .module('app.directives')
-        .directive('ngFileInput', directive);
-
-    directive.$inject = ['$parse'];
-
-    function directive($parse) {
+angular
+    .module('app.directives')
+    .directive('ngFileInput', ['$parse', function ($parse) {
 
         return {
             link: link,
@@ -20,10 +13,8 @@
 
                 $parse(attrs.ngFileInput)
                     .assign($scope, element[0].files);
-                    
+
                 $scope.$apply();
             });
         }
-    }
-
-})();
+    }]);

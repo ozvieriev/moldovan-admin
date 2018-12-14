@@ -1,11 +1,6 @@
-(function () {
-    'use strict';
-
-    angular
-        .module('app.services')
-        .factory('$config', factory);
-
-    function factory() {
+angular
+    .module('app.services')
+    .factory('$config', function () {
 
         var service = {};
 
@@ -19,5 +14,4 @@
         };
 
         return service;
-    };
-})();
+    });

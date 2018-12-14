@@ -1,26 +1,21 @@
 ﻿(function () {
-    'use strict';
 
     angular
         .module('app.services')
-        .factory('$dict', factory);
+        .factory('$dict', function () {
 
-    factory.$inject = [];
+            var service = {};
 
-    function factory() {
+            service.wifiModes = function () {
 
-        var service = {};
+                return [
+                    new viewWifiMode('access-point', 'Access Point'),
+                    new viewWifiMode('client', 'Client')
+                ];
+            };
 
-        service.wifiModes = function () {
-
-            return [
-                new viewWifiMode('access-point', 'Access Point'),
-                new viewWifiMode('client', 'Client')
-            ];
-        };
-
-        return service;
-    };
+            return service;
+        });
 
     var viewWifiMode = function (id, title) {
 

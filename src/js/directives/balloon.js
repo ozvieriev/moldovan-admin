@@ -1,13 +1,6 @@
-(function () {
-    'use strict';
-
-    angular
-        .module('app.directives')
-        .directive('ngBalloon', directive);
-
-    directive.$inject = ['$parse'];
-
-    function directive($parse) {
+angular
+    .module('app.directives')
+    .directive('ngBalloon', function () {
 
         return {
             link: link,
@@ -21,7 +14,5 @@
                 .attr('data-balloon-pos', 'right')
                 .attr('data-balloon', attrs.ngBalloon)
                 .html('<i class="glyphicon glyphicon-info-sign"></i>');
-        }
-    }
-
-})();
+        };
+    });

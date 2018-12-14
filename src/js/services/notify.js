@@ -1,13 +1,6 @@
-﻿(function () {
-    'use strict';
-
-    angular
-        .module('app.services')
-        .factory('$notify', factory);
-
-    factory.$inject = ['$timeout'];
-
-    function factory($timeout) {
+﻿angular
+    .module('app.services')
+    .factory('$notify', ['$timeout', function ($timeout) {
 
         var service = {};
 
@@ -39,5 +32,4 @@
         };
 
         return service;
-    };
-})();
+    }]);

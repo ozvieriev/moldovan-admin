@@ -1,29 +1,26 @@
-(function () {
+angular.module('http-interceptor', [])
+    .config(['$httpProvider', function ($httpProvider) {
 
-    angular.module('http-interceptor', [])
-        .config(['$httpProvider', function ($httpProvider) {
+        $httpProvider.interceptors.push(['$q', function ($q) {
 
-            $httpProvider.interceptors.push(['$q', function ($q) {
+            var interceptor = {};
 
-                var interceptor = {};
+            interceptor.request = function (config) {
 
-                interceptor.request = function (config) {
+                config.headers = config.headers || {};
 
-                    config.headers = config.headers || {};
+                return config;
+            };
+            interceptor.response = function (response) {
 
-                    return config;
-                };
-                interceptor.response = function (response) {
-                    
-                    var config = response.config || {};
+                var config = response.config || {};
 
-                    if (config.asJson === true)
-                        return response.data;
+                if (config.asJson === true)
+                    return response.data;
 
-                    return response;
-                };
+                return response;
+            };
 
-                return interceptor;
-            }]);
+            return interceptor;
         }]);
-})();
+    }]);

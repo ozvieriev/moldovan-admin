@@ -1,25 +1,22 @@
 (function () {
-    'use strict';
 
     angular
         .module('app.directives')
-        .directive('ngSidebar', directive);
+        .directive('ngSidebar', function () {
 
-    function directive() {
+            return {
+                link: link,
+                restrict: 'A',
+                replace: true,
+                templateUrl: 'directives/sidebar.html',
+                scope: {}
+            };
 
-        return {
-            link: link,
-            restrict: 'A',
-            replace: true,
-            templateUrl: 'directives/sidebar.html',
-            scope: {}
-        };
+            function link(scope, element, attrs) {
 
-        function link(scope, element, attrs) {
-
-            scope.items = viewSidebarBuilder.build();
-        }
-    };
+                scope.items = viewSidebarBuilder.build();
+            }
+        });
 
     var viewSidebar = function (id, title, href) {
 
@@ -72,6 +69,5 @@
                 ])
         ];
     };
-
 
 })();

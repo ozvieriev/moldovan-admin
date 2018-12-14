@@ -1,13 +1,5 @@
-(function () {
-
-    'use strict';
-
-    angular.module('app.controllers')
-        .controller('appController', controller);
-
-    controller.$inject = ['$rootScope', '$scope', '$state', '$ws'];
-
-    function controller($rootScope, $scope, $state, $ws) {
+angular.module('app.controllers')
+    .controller('appController', ['$rootScope', '$scope', '$state', '$ws', function ($rootScope, $scope, $state, $ws) {
 
         $scope.$ws = $ws;
 
@@ -17,6 +9,4 @@
             if ($state.$current.name === 'index')
                 $state.go('control');
         });
-    };
-
-})();
+    }]);

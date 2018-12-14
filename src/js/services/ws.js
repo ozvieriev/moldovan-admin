@@ -1,13 +1,6 @@
-(function () {
-    'use strict';
-
-    angular
-        .module('app.services')
-        .factory('$ws', factory);
-
-    factory.$inject = ['$rootScope', '$websocket', '$config'];
-
-    function factory($rootScope, $websocket, $config) {
+angular
+    .module('app.services')
+    .factory('$ws', ['$rootScope', '$websocket', '$config', function ($rootScope, $websocket, $config) {
 
         var service = {};
 
@@ -71,5 +64,4 @@
         };
 
         return service;
-    };
-})();
+    }]);

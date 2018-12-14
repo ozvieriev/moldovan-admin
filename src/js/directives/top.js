@@ -1,11 +1,6 @@
-(function () {
-    'use strict';
-
-    angular
-        .module('app.directives')
-        .directive('ngTop', directive);
-
-    function directive() {
+angular
+    .module('app.directives')
+    .directive('ngTop', function () {
 
         return {
             link: link,
@@ -19,6 +14,4 @@
                 angular.element('html, body').stop().animate({ scrollTop: 0 }, 500, 'swing');
             });
         }
-    }
-
-})();
+    });

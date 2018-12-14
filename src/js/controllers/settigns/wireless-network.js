@@ -1,89 +1,83 @@
 (function () {
 
-    'use strict';
-
     angular.module('app.controllers')
-        .controller('settingsWirelessNetworkController', controller);
+        .controller('settingsWirelessNetworkController', ['$rootScope', '$scope', '$ws', function ($rootScope, $scope, $ws) {
 
-    controller.$inject = ['$rootScope', '$scope', '$ws'];
+            $scope.$ws = $ws;
+            $scope.template = null;
 
-    function controller($rootScope, $scope, $ws) {
+            $scope.autoDisableWifis = [
+                new viewAutoDisableWifi('Always on', null),
+                new viewAutoDisableWifi('3 min', 3),
+                new viewAutoDisableWifi('4 min', 4),
+                new viewAutoDisableWifi('5 min', 5),
+                new viewAutoDisableWifi('10 min', 10),
+                new viewAutoDisableWifi('15 min', 15),
+                new viewAutoDisableWifi('30 min', 30),
+            ];
+            $scope.networks = null;
 
-        $scope.$ws = $ws;
-        $scope.template = null;
+            $scope.model = {
+                wifiMode: 'client',
+                accessPoint: {
+                    ssid: null,
+                    password: null,
+                    isHideNetworkName: false,
+                    ipAddress: null,
+                    subnetMask: null,
+                    autoDisableWifi: $scope.autoDisableWifis[0]
+                },
+                client: {
+                    network: null,
+                    ssid: null,
+                    bssid: null,
+                    password: null,
+                    isUseDHCP: true,
+                    ipAddress: null,
+                    subnetMask: null,
+                    dnsServer: null,
+                    gateway: null,
+                    autoDisableWifi: $scope.autoDisableWifis[0]
+                }
+            };
 
-        $scope.autoDisableWifis = [
-            new viewAutoDisableWifi('Always on', null),
-            new viewAutoDisableWifi('3 min', 3),
-            new viewAutoDisableWifi('4 min', 4),
-            new viewAutoDisableWifi('5 min', 5),
-            new viewAutoDisableWifi('10 min', 10),
-            new viewAutoDisableWifi('15 min', 15),
-            new viewAutoDisableWifi('30 min', 30),
-        ];
-        $scope.networks = null;
+            //
+            $scope.$watch('model.wifiMode', function (value) {
 
-        $scope.model = {
-            wifiMode: 'client',
-            accessPoint: {
-                ssid: null,
-                password: null,
-                isHideNetworkName: false,
-                ipAddress: null,
-                subnetMask: null,
-                autoDisableWifi: $scope.autoDisableWifis[0]
-            },
-            client: {
-                network: null,
-                ssid: null,
-                bssid: null,
-                password: null,
-                isUseDHCP: true,
-                ipAddress: null,
-                subnetMask: null,
-                dnsServer: null,
-                gateway: null,
-                autoDisableWifi: $scope.autoDisableWifis[0]
-            }
-        };
+                $scope.template = 'pages/settings/wireless-network/' + value + '.html';
+            });
+            $scope.$watch('model.client.network', function (value) {
 
-        //
-        $scope.$watch('model.wifiMode', function (value) {
+                $scope.model.client.bssid = (value || {}).bssid || null;
+            });
 
-            $scope.template = 'pages/settings/wireless-network/' + value + '.html';
-        });
-        $scope.$watch('model.client.network', function (value) {
+            $rootScope.$on('ws:event:cfg', function (event, json) {
 
-            $scope.model.client.bssid = (value || {}).bssid || null;
-        });
+                var network = $ws.config.network();
+                if (!network) return;
 
-        $rootScope.$on('ws:event:cfg', function (event, json) {
 
-            var network = $ws.config.network();
-            if(!network) return;
+            });
+            $rootScope.$on('ws:event:wifi-list', function (event, json) {
 
-            
-        });
-        $rootScope.$on('ws:event:wifi-list', function (event, json) {
+                if (json['list'])
+                    json.networks = json['list'];
 
-            if (json['list'])
-                json.networks = json['list'];
+                /*************************************/
 
-            /*************************************/
+                if (typeof json.networks === 'undefined')
+                    return;
 
-            if (typeof json.networks === 'undefined')
-                return;
+                var networks = [];
+                angular.forEach(json.networks, function (item) {
+                    this.push(new viewNetwork(item));
+                }, networks);
+                $scope.networks = networks;
 
-            var networks = [];
-            angular.forEach(json.networks, function (item) {
-                this.push(new viewNetwork(item));
-            }, networks);
-            $scope.networks = networks;
-
-            if ($scope.model.wifiMode === 'client')
-                $scope.model.client.network = networks.length ? networks[0] : null;
-        });
-    };
+                if ($scope.model.wifiMode === 'client')
+                    $scope.model.client.network = networks.length ? networks[0] : null;
+            });
+        }]);
 
     var viewAutoDisableWifi = function (name, value) {
 
@@ -98,6 +92,5 @@
 
         this.name = 'BSSID: ' + this.bssid + ', RSSI: ' + this.rssi + ', Network: ' + this.ssid;
     };
-
 
 })();

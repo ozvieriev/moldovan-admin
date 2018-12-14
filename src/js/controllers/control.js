@@ -1,13 +1,5 @@
-﻿(function () {
-
-    'use strict';
-
-    angular.module('app.controllers')
-        .controller('controlController', controller);
-
-    controller.$inject = ['$rootScope', '$scope', '$ws'];
-
-    function controller($rootScope, $scope, $ws) {
+﻿angular.module('app.controllers')
+    .controller('controlController', ['$rootScope', '$scope', '$ws', function controller($rootScope, $scope, $ws) {
 
         $scope.$ws = $ws;
 
@@ -21,6 +13,4 @@
 
             $scope.serverRange = json.g1;
         });
-    };
-
-})();
+    }]);
