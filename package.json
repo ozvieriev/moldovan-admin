@@ -2,8 +2,12 @@
   "name": "moldovan-admin",
   "version": "1.0.0",
   "main": "gulp.js",
-  "dependencies": {},
+  "dependencies": {
+    "@babel/polyfill": "^7.0.0"
+  },
   "devDependencies": {
+    "@babel/core": "^7.2.0",
+    "@babel/preset-env": "^7.2.0",
     "angular": "^1.7.5",
     "angular-ui-router": "^1.0.20",
     "angular-websocket": "^2.0.1",
@@ -12,6 +16,7 @@
     "browser-sync": "2.26.3",
     "fs": "0.0.1-security",
     "gulp": "^4.0.0",
+    "gulp-babel": "^8.0.0",
     "gulp-change": "^1.0.2",
     "gulp-clean": "^0.4.0",
     "gulp-concat": "^2.6.1",

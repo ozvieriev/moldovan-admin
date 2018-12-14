@@ -28,9 +28,9 @@ angular.module('app', ['ui.router',
 
             $stateProvider.
                 state(href, {
-                    url: '/' + href,
-                    templateUrl: ['pages/', href, '.html'].join(''),
-                    controller: [controller, 'Controller'].join('')
+                    url: `/${href}`,
+                    templateUrl: `pages/${href}.html`,
+                    controller: `${controller}Controller`
                 });
         };
         _when('index', 'index');

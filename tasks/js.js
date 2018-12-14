@@ -1,9 +1,13 @@
 const gulp = require('gulp');
+const babel = require('gulp-babel');
 const concat = require('gulp-concat');
 
 gulp.task('js:app', () => {
 
     return gulp.src('src/js/**/*.js')
+        .pipe(babel({
+            presets: ['@babel/env']
+        }))
         .pipe(concat('app.js'))
         .pipe(gulp.dest('dist/js'))
 });
