@@ -40,7 +40,6 @@ angular.module('app', ['ui.router', 'app.services', 'app.controllers', 'app.dire
 
   _when('settings/wireless-network', 'settingsWirelessNetwork');
 }); //https://github.com/modularcode/modular-admin-angularjs/blob/master/src/_main.js
-"use strict";
 
 angular.module('app.controllers').controller('appController', ['$rootScope', '$scope', '$state', '$ws', function ($rootScope, $scope, $state, $ws) {
   $scope.$ws = $ws;
@@ -49,8 +48,6 @@ angular.module('app.controllers').controller('appController', ['$rootScope', '$s
     if ($state.$current.name === 'index') $state.go('control');
   });
 }]);
-"use strict";
-
 angular.module('app.controllers').controller('controlController', ['$rootScope', '$scope', '$ws', function controller($rootScope, $scope, $ws) {
   $scope.$ws = $ws;
   $scope.uiRange = 0;
@@ -60,11 +57,7 @@ angular.module('app.controllers').controller('controlController', ['$rootScope',
     $scope.serverRange = json.g1;
   });
 }]);
-"use strict";
-
 angular.module('app.controllers').controller('indexController', function () {});
-"use strict";
-
 angular.module('app.directives').directive('ngBalloon', function () {
   return {
     link: link,
@@ -77,8 +70,6 @@ angular.module('app.directives').directive('ngBalloon', function () {
 
   ;
 });
-"use strict";
-
 angular.module('app.directives').directive('ngDebug', ['$rootScope', '$ws', function ($rootScope, $ws) {
   return {
     link: link,
@@ -133,8 +124,6 @@ angular.module('app.directives').directive('ngDebug', ['$rootScope', '$ws', func
     });
   }
 }]);
-"use strict";
-
 angular.module('app.directives').directive('ngFileInput', ['$parse', function ($parse) {
   return {
     link: link,
@@ -148,7 +137,6 @@ angular.module('app.directives').directive('ngFileInput', ['$parse', function ($
     });
   }
 }]);
-"use strict";
 
 (function () {
   angular.module('app.directives').directive('ngSidebar', function () {
@@ -197,7 +185,6 @@ angular.module('app.directives').directive('ngFileInput', ['$parse', function ($
     return [new viewSidebar('control', 'Control', 'control').setIcon('wrench'), new viewSidebar('settings', 'Settings').setIcon('cog').addItems([new viewSidebar('wireless-network', 'Wireless Network', 'settings/wireless-network').setIcon('signal'), new viewSidebar('hardware-settings', 'Hardware Settings', 'settings/hardware-settings').setIcon('wrench'), new viewSidebar('mqtt-settings', 'MQTT Settings', 'settings/mqtt-settings').setIcon('cog'), new viewSidebar('ntp-time-settings', 'NTP (Time) Settings', 'settings/ntp-time-settings').setIcon('cloud'), new viewSidebar('update', 'Update', 'settings/update').setIcon('upload')])];
   };
 })();
-"use strict";
 
 angular.module('app.directives').directive('ngTop', function () {
   return {
@@ -213,8 +200,6 @@ angular.module('app.directives').directive('ngTop', function () {
     });
   }
 });
-"use strict";
-
 angular.module('http-notify-interceptor', []).config(['$httpProvider', function ($httpProvider) {
   $httpProvider.interceptors.push(['$q', '$notify', function ($q, $notify) {
     var interceptor = {};
@@ -247,8 +232,6 @@ angular.module('http-notify-interceptor', []).config(['$httpProvider', function 
     return interceptor;
   }]);
 }]);
-"use strict";
-
 angular.module('http-interceptor', []).config(['$httpProvider', function ($httpProvider) {
   $httpProvider.interceptors.push(['$q', function ($q) {
     var interceptor = {};
@@ -267,8 +250,6 @@ angular.module('http-interceptor', []).config(['$httpProvider', function ($httpP
     return interceptor;
   }]);
 }]);
-"use strict";
-
 angular.module('app.services').factory('$api', ['$http', '$config', function factory($http, $config) {
   var service = {};
 
@@ -287,8 +268,6 @@ angular.module('app.services').factory('$api', ['$http', '$config', function fac
 
   return service;
 }]);
-"use strict";
-
 angular.module('app.services').factory('$config', function () {
   var service = {};
 
@@ -301,7 +280,6 @@ angular.module('app.services').factory('$config', function () {
 
   return service;
 });
-"use strict";
 
 (function () {
   angular.module('app.services').factory('$dict', function () {
@@ -319,7 +297,6 @@ angular.module('app.services').factory('$config', function () {
     this.title = title;
   };
 })();
-"use strict";
 
 angular.module('app.services').factory('$notify', ['$timeout', function ($timeout) {
   var service = {};
@@ -346,8 +323,6 @@ angular.module('app.services').factory('$notify', ['$timeout', function ($timeou
 
   return service;
 }]);
-"use strict";
-
 angular.module('app.services').factory('$ws', ['$rootScope', '$websocket', '$config', function ($rootScope, $websocket, $config) {
   var service = {};
   var _config = null;
@@ -416,17 +391,9 @@ angular.module('app.services').factory('$ws', ['$rootScope', '$websocket', '$con
 
   return service;
 }]);
-"use strict";
-
 angular.module('app.controllers').controller('settingsHardwareSettingsController', function () {});
-"use strict";
-
 angular.module('app.controllers').controller('settingsMqttSettingsController', function () {});
-"use strict";
-
 angular.module('app.controllers').controller('settingsNtpTimeSettingsController', function () {});
-"use strict";
-
 angular.module('app.controllers').controller('settingsUpdateController', ['$scope', '$api', function ($scope, $api) {
   $scope.model = {};
 
@@ -434,7 +401,6 @@ angular.module('app.controllers').controller('settingsUpdateController', ['$scop
     $api.update($scope.files);
   };
 }]);
-"use strict";
 
 (function () {
   angular.module('app.controllers').controller('settingsWirelessNetworkController', ['$rootScope', '$scope', '$ws', function ($rootScope, $scope, $ws) {
