@@ -1,12 +1,13 @@
 const gulp = require('gulp');
 const concat = require('gulp-concat');
+const cleanCSS = require('gulp-clean-css');
 
 gulp.task('css:app', () => {
     return gulp.src([
         'src/css/app/**/*.css'
     ])
-        .pipe(concat('app.css'))
-        //.pipe(minifyCSS())
+        .pipe(concat('app.min.css'))
+        .pipe(cleanCSS())
         .pipe(gulp.dest('dist/css'))
 });
 gulp.task('css:vendor', () => {
