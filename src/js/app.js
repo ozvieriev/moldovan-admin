@@ -22,6 +22,11 @@ angular.module('app', ['ui.router',
     })
     .config(($stateProvider, $urlRouterProvider) => {
 
+        // $locationProvider.html5Mode({
+        //     enabled: true,
+        //     requireBase: false
+        // });
+
         $urlRouterProvider.otherwise('/');
 
         var _when = function (href, controller) {
