@@ -20,7 +20,7 @@ angular.module('app', ['ui.router',
             //     return transitions.router.stateService.target('index');
         });
     })
-    .config(function ($stateProvider, $urlRouterProvider) {
+    .config(($stateProvider, $urlRouterProvider) => {
 
         $urlRouterProvider.otherwise('/');
 

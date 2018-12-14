@@ -1,18 +1,16 @@
 angular
     .module('app.directives')
-    .directive('ngBalloon', function () {
+    .directive('ngBalloon', () => {
 
         return {
-            link: link,
+            link: ($scope, element, attrs) => {
+
+                element
+                    .attr('data-balloon-length', 'large')
+                    .attr('data-balloon-pos', 'right')
+                    .attr('data-balloon', attrs.ngBalloon)
+                    .html('<i class="glyphicon glyphicon-info-sign"></i>');
+            },
             restrict: 'A'
-        };
-
-        function link($scope, element, attrs) {
-
-            element
-                .attr('data-balloon-length', 'large')
-                .attr('data-balloon-pos', 'right')
-                .attr('data-balloon', attrs.ngBalloon)
-                .html('<i class="glyphicon glyphicon-info-sign"></i>');
         };
     });

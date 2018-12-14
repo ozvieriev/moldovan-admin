@@ -2,20 +2,18 @@
 
     angular
         .module('app.directives')
-        .directive('ngSidebar', function () {
+        .directive('ngSidebar', () => {
 
             return {
-                link: link,
+                link: (scope, element, attrs) => {
+
+                    scope.items = viewSidebarBuilder.build();
+                },
                 restrict: 'A',
                 replace: true,
                 templateUrl: 'directives/sidebar.html',
                 scope: {}
             };
-
-            function link(scope, element, attrs) {
-
-                scope.items = viewSidebarBuilder.build();
-            }
         });
 
     var viewSidebar = function (id, title, href) {

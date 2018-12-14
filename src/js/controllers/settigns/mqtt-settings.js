@@ -1,2 +1,2 @@
 angular.module('app.controllers')
-        .controller('settingsMqttSettingsController', function () { });
+        .controller('settingsMqttSettingsController', () => { });

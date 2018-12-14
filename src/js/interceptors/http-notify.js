@@ -1,5 +1,5 @@
 angular.module('http-notify-interceptor', [])
-    .config(['$httpProvider', function ($httpProvider) {
+    .config(['$httpProvider', ($httpProvider) => {
 
         $httpProvider.interceptors.push(['$q', '$notify', function ($q, $notify) {
 

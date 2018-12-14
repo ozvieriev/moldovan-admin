@@ -1,7 +1,7 @@
-(function () {
+(() => {
 
     angular.module('app.controllers')
-        .controller('settingsWirelessNetworkController', ['$rootScope', '$scope', '$ws', function ($rootScope, $scope, $ws) {
+        .controller('settingsWirelessNetworkController', ['$rootScope', '$scope', '$ws', ($rootScope, $scope, $ws) => {
 
             $scope.$ws = $ws;
             $scope.template = null;
@@ -42,23 +42,23 @@
             };
 
             //
-            $scope.$watch('model.wifiMode', function (value) {
+            $scope.$watch('model.wifiMode', (value) => {
 
                 $scope.template = 'pages/settings/wireless-network/' + value + '.html';
             });
-            $scope.$watch('model.client.network', function (value) {
+            $scope.$watch('model.client.network', (value) => {
 
                 $scope.model.client.bssid = (value || {}).bssid || null;
             });
 
-            $rootScope.$on('ws:event:cfg', function (event, json) {
+            $rootScope.$on('ws:event:cfg', (event, json) => {
 
                 var network = $ws.config.network();
                 if (!network) return;
 
 
             });
-            $rootScope.$on('ws:event:wifi-list', function (event, json) {
+            $rootScope.$on('ws:event:wifi-list', (event, json) => {
 
                 if (json['list'])
                     json.networks = json['list'];
@@ -69,7 +69,7 @@
                     return;
 
                 var networks = [];
-                angular.forEach(json.networks, function (item) {
+                angular.forEach(json.networks, (item) => {
                     this.push(new viewNetwork(item));
                 }, networks);
                 $scope.networks = networks;

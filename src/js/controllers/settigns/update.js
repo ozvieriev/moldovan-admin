@@ -1,8 +1,8 @@
 angular.module('app.controllers')
-    .controller('settingsUpdateController', ['$scope', '$api', function ($scope, $api) {
+    .controller('settingsUpdateController', ['$scope', '$api', ($scope, $api) => {
 
         $scope.model = {};
-        $scope.update = function () {
+        $scope.update = () => {
 
             $api.update($scope.files);
         };

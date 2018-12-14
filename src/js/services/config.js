@@ -1,12 +1,12 @@
 angular
     .module('app.services')
-    .factory('$config', function () {
+    .factory('$config', () => {
 
-        var service = {};
+        let service = {};
 
-        service.getRemoteHost = function () {
+        service.getRemoteHost = () => {
 
-            var hostname = window.location.hostname;
+            let hostname = window.location.hostname;
             if (window.location.hostname === 'localhost' && window.location.port === '3000')
                 hostname = '192.168.31.50'; //.239
 
