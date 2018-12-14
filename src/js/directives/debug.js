@@ -11,10 +11,10 @@ angular
 
                     var dateTime = new Date();
 
-                    var dateTimeFormat = [dateTime.getHours(), 
-                        dateTime.getMinutes(), 
-                        dateTime.getSeconds()].join(':');
-                        
+                    var dateTimeFormat = [dateTime.getHours(),
+                    dateTime.getMinutes(),
+                    dateTime.getSeconds()].join(':');
+
                     var line = [dateTimeFormat, log].join(' - ') + '\n'
 
                     scope.model.log = line + scope.model.log;
