@@ -51,7 +51,7 @@ angular
 
         service.wifi = {};
         service.wifi.scan = function () {
-            service.send({ cmd: 'state', wifi: 'scan' });
+            service.send({ cmd: 'wifiscan' });
         };
 
         service.config = {};

@@ -30,7 +30,7 @@
                 client: {
                     network: null,
                     ssid: null,
-                    bssid: null,
+                    //bssid: null,
                     password: null,
                     isUseDHCP: true,
                     ipAddress: null,
@@ -58,10 +58,10 @@
 
 
             });
-            $rootScope.$on('ws:event:wifi-list', (event, json) => {
+            $rootScope.$on('ws:event:wifiscan', (event, json) => {
 
-                if (json['list'])
-                    json.networks = json['list'];
+                if (json['wifilist'])
+                    json.networks = json['wifilist'];
 
                 /*************************************/
 
@@ -70,8 +70,8 @@
 
                 var networks = [];
                 angular.forEach(json.networks, (item) => {
-                    this.push(new viewNetwork(item));
-                }, networks);
+                    networks.push(new viewNetwork(item));
+                });
                 $scope.networks = networks;
 
                 if ($scope.model.wifiMode === 'client')
@@ -87,10 +87,11 @@
     var viewNetwork = function (json) {
 
         this.ssid = json.ssid;
-        this.bssid = json.bssid;
-        this.rssi = json.rssi;
+        // this.bssid = json.bssid || null;
+        // this.rssi = json.rssi || null;
 
-        this.name = 'BSSID: ' + this.bssid + ', RSSI: ' + this.rssi + ', Network: ' + this.ssid;
+        this.name = this.ssid;
+        //this.name = 'BSSID: ' + this.bssid + ', RSSI: ' + this.rssi + ', Network: ' + this.ssid;
     };
 
 })();

@@ -9,18 +9,18 @@ const concat = require('gulp-concat');
 gulp.task('js:app', () => {
 
     return gulp.src('src/js/**/*.js')
-        .pipe(concat('app.js'))
+        .pipe(concat('app.min.js'))
         .pipe(babel({
             presets: ['@babel/env']
         }))
-        .pipe(minify({
-            ext: {
-                src: '.js',
-                min: '.min.js'
-            },
-            mangle: false,
-            ignoreFiles: ['.min.js']
-        }))
+        // .pipe(minify({
+        //     ext: {
+        //         src: '.js',
+        //         min: '.min.js'
+        //     },
+        //     mangle: false,
+        //     ignoreFiles: ['.min.js']
+        // }))
         .pipe(gulp.dest('dist/js'))
         .pipe(fn(function (file) {
 
