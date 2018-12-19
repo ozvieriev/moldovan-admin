@@ -4,6 +4,10 @@
 
         var service = {};
 
+        service.http = function () {
+
+            return $http.get('/api/config/');
+        };
         service.update = function (files) {
 
             var formData = new FormData();

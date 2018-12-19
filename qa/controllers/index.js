@@ -1,20 +1,11 @@
-describe(`indexController`, function () {
+describe(`controller:index`, () => {
 
-    var $scope;
+    // it('getName', done => {
+    //     expect('Alex').toEqual($scope.getName());
 
-    beforeEach(module('app'));
-    beforeEach(inject(function ($rootScope, $controller) {
-
-        $scope = $rootScope.$new();
-        $controller('indexController', {
-            $scope: $scope
-        });
-    }));
-
-    it('getName', function () {
-        expect('Alex').toEqual($scope.getName());
-    });
-    it('getName 2', function () {
-        expect('Alex').toEqual($scope.getName());
-    });
+    //     done();
+    // });
+    // it('getName 2', function () {
+    //     expect('Alex').toEqual($scope.getName());
+    // });
 });

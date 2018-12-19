@@ -55,8 +55,6 @@
 
                 var network = $ws.config.network();
                 if (!network) return;
-
-
             });
             $rootScope.$on('ws:event:wifiscan', (event, json) => {
 
