@@ -3,6 +3,7 @@ const concat = require('gulp-concat');
 const cleanCSS = require('gulp-clean-css');
 
 gulp.task('css:app', () => {
+    
     return gulp.src([
         'src/css/app/**/*.css'
     ])
@@ -11,6 +12,7 @@ gulp.task('css:app', () => {
         .pipe(gulp.dest('dist/css'))
 });
 gulp.task('css:vendor', () => {
+    
     return gulp.src([
         'node_modules/bootstrap/dist/css/bootstrap.min.css',
         'src/css/admin-lte/css/adminlte.min.css',
